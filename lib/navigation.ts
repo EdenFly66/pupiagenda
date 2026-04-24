@@ -1,8 +1,17 @@
+import {
+  ClipboardPlus,
+  History,
+  LayoutDashboard,
+  Settings,
+  Users,
+  type LucideIcon,
+} from "lucide-react";
+
 export type NavigationItem = {
   href: string;
   label: string;
   shortLabel: string;
-  icon: string;
+  icon: LucideIcon;
 };
 
 export const navigationItems: NavigationItem[] = [
@@ -10,30 +19,30 @@ export const navigationItems: NavigationItem[] = [
     href: "/dashboard",
     label: "Dashboard",
     shortLabel: "Inicio",
-    icon: "D",
+    icon: LayoutDashboard,
   },
   {
     href: "/pacientes",
     label: "Pacientes",
     shortLabel: "Pacientes",
-    icon: "P",
+    icon: Users,
   },
   {
     href: "/sesiones/nueva",
-    label: "Nueva sesión",
-    shortLabel: "Sesión",
-    icon: "S",
+    label: "Nueva sesion",
+    shortLabel: "Sesion",
+    icon: ClipboardPlus,
   },
   {
     href: "/historial",
     label: "Historial",
     shortLabel: "Historial",
-    icon: "H",
+    icon: History,
   },
   {
     href: "/configuracion",
-    label: "Configuración",
+    label: "Configuracion",
     shortLabel: "Ajustes",
-    icon: "C",
+    icon: Settings,
   },
 ];

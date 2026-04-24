@@ -2,10 +2,12 @@
 
 import type { ChangeEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
+import { format } from "date-fns";
 import { PatientSelector } from "@/components/sessions/patient-selector";
 import { SessionActions } from "@/components/sessions/session-actions";
 import { SessionDatePicker } from "@/components/sessions/session-date-picker";
 import { SessionTextarea } from "@/components/sessions/session-textarea";
+import { supabase } from "@/lib/supabase";
 
 type SessionFormState = {
   patientId: string;
@@ -39,13 +41,13 @@ const emotionalStates = [
 ];
 
 export function SessionForm() {
-  const [form, setForm] = useState<SessionFormState>(() => ({
-    ...initialState,
-    sessionDate: new Date(),
-  }));
+  const [form, setForm] = useState<SessionFormState>(() => getInitialForm());
   const [isDirty, setIsDirty] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const [autoSaveStatus, setAutoSaveStatus] = useState("Autoguardado listo");
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const autoSaveLabel = useMemo(() => {
     if (autoSaveStatus === "Guardando") {
@@ -127,23 +129,61 @@ export function SessionForm() {
     setForm((current) => ({ ...current, [name]: value }));
     setIsDirty(true);
     setAutoSaveStatus("Guardando");
+    setSaveError(null);
+    setSuccessMessage(null);
   }
 
   function updateSessionDate(date: Date) {
     setForm((current) => ({ ...current, sessionDate: date }));
     setIsDirty(true);
     setAutoSaveStatus("Guardando");
+    setSaveError(null);
+    setSuccessMessage(null);
   }
 
-  function markSaved(kind: "final" | "draft") {
+  async function saveSession(kind: "final" | "draft") {
+    setSaveError(null);
+    setSuccessMessage(null);
+
+    if (!form.patientId) {
+      setSaveError("Selecciona una paciente antes de guardar la sesion.");
+      return;
+    }
+
+    setIsSaving(true);
+
+    const payload = {
+      patient_id: form.patientId,
+      session_date: format(form.sessionDate, "yyyy-MM-dd"),
+      motivo: cleanOptional(form.reason),
+      desarrollo: cleanOptional(form.development),
+      observaciones: cleanOptional(form.clinicalObservations),
+      intervenciones: cleanOptional(form.interventions),
+      estado_emocional: cleanOptional(form.emotionalState),
+      tareas: cleanOptional(form.assignedTasks),
+    };
+
+    const { error } = await supabase.from("clinical_sessions").insert(payload);
+
+    console.log("Resultado guardado sesion", { kind, payload, error });
+
+    if (error) {
+      setSaveError(error.message);
+      setIsSaving(false);
+      return;
+    }
+
     const savedAt = formatTime();
-    console.log(
-      kind === "final" ? "Sesion guardada simulada" : "Borrador guardado simulado",
-      form,
-    );
     setLastSavedAt(savedAt);
     setAutoSaveStatus(kind === "final" ? "Sesion guardada" : "Borrador guardado");
+    setSuccessMessage(
+      kind === "final"
+        ? "Sesion guardada correctamente."
+        : "Borrador guardado correctamente.",
+    );
+    setForm(getInitialForm());
     setIsDirty(false);
+    setIsSaving(false);
   }
 
   return (
@@ -156,6 +196,18 @@ export function SessionForm() {
             onChange={updateSessionDate}
           />
         </div>
+
+        {saveError ? (
+          <div className="mt-5 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm leading-6 text-rose-900">
+            {saveError}
+          </div>
+        ) : null}
+
+        {successMessage ? (
+          <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-900">
+            {successMessage}
+          </div>
+        ) : null}
 
         <label className="mt-6 block">
           <span className="text-sm font-semibold text-foreground">
@@ -242,11 +294,24 @@ export function SessionForm() {
       <SessionActions
         autoSaveLabel={autoSaveLabel}
         isDirty={isDirty}
-        onSave={() => markSaved("final")}
-        onDraft={() => markSaved("draft")}
+        isSaving={isSaving}
+        onSave={() => void saveSession("final")}
+        onDraft={() => void saveSession("draft")}
       />
     </form>
   );
+}
+
+function getInitialForm(): SessionFormState {
+  return {
+    ...initialState,
+    sessionDate: new Date(),
+  };
+}
+
+function cleanOptional(value: string) {
+  const trimmedValue = value.trim();
+  return trimmedValue || null;
 }
 
 function formatTime() {

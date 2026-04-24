@@ -1,8 +1,10 @@
 import Link from "next/link";
-import type { Patient } from "@/lib/mock-patients";
-import { PatientStatusBadge } from "./patient-status-badge";
+import type { PatientRow } from "@/lib/patient-types";
+import { formatPatientCreatedAt, getPatientFullName } from "@/lib/patient-types";
 
-export function PatientCard({ patient }: { patient: Patient }) {
+export function PatientCard({ patient }: { patient: PatientRow }) {
+  const fullName = getPatientFullName(patient);
+
   return (
     <Link
       href={`/pacientes/${patient.id}`}
@@ -11,23 +13,26 @@ export function PatientCard({ patient }: { patient: Patient }) {
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <h3 className="truncate text-lg font-semibold text-foreground">
-            {patient.name}
+            {fullName}
           </h3>
-          <p className="mt-1 text-sm text-muted">
-            {patient.pronouns} / {patient.age} anos
-          </p>
+          <p className="mt-1 text-sm text-muted">Registro de paciente</p>
         </div>
-        <PatientStatusBadge status={patient.status} />
+        <span className="rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-800">
+          Supabase
+        </span>
       </div>
 
       <p className="mt-4 line-clamp-2 text-sm leading-6 text-muted">
-        {patient.reason}
+        Datos reales leidos desde la tabla patients. El perfil clinico se
+        completara cuando existan mas campos.
       </p>
 
       <div className="mt-5 grid gap-3 text-sm">
-        <InfoRow label="Correo" value={patient.email} />
-        <InfoRow label="Telefono" value={patient.phone} />
-        <InfoRow label="Ultima sesion" value={patient.lastSession} />
+        <InfoRow label="Nombre" value={patient.first_name ?? "Sin dato"} />
+        <InfoRow label="Apellido" value={patient.last_name ?? "Sin dato"} />
+        <InfoRow label="Correo" value={patient.email ?? "Sin correo"} />
+        <InfoRow label="Telefono" value={patient.phone ?? "Sin telefono"} />
+        <InfoRow label="Creado" value={formatPatientCreatedAt(patient.created_at)} />
       </div>
 
       <div className="mt-5 flex items-center justify-between border-t border-rose-100 pt-4">

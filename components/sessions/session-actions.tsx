@@ -1,6 +1,7 @@
 type SessionActionsProps = {
   autoSaveLabel: string;
   isDirty: boolean;
+  isSaving: boolean;
   onSave: () => void;
   onDraft: () => void;
 };
@@ -8,6 +9,7 @@ type SessionActionsProps = {
 export function SessionActions({
   autoSaveLabel,
   isDirty,
+  isSaving,
   onSave,
   onDraft,
 }: SessionActionsProps) {
@@ -22,16 +24,18 @@ export function SessionActions({
           <button
             type="button"
             onClick={onDraft}
-            className="inline-flex h-11 items-center justify-center rounded-2xl border border-rose-100 bg-white px-5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50"
+            disabled={isSaving}
+            className="inline-flex h-11 items-center justify-center rounded-2xl border border-rose-100 bg-white px-5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-70"
           >
-            Guardar como borrador
+            {isSaving ? "Guardando..." : "Guardar como borrador"}
           </button>
           <button
             type="button"
             onClick={onSave}
-            className="inline-flex h-11 items-center justify-center rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a]"
+            disabled={isSaving}
+            className="inline-flex h-11 items-center justify-center rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white disabled:cursor-not-allowed disabled:opacity-70"
           >
-            Guardar sesi&oacute;n
+            {isSaving ? "Guardando..." : "Guardar sesion"}
           </button>
         </div>
       </div>

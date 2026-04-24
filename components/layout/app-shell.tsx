@@ -1,5 +1,6 @@
 "use client";
 
+import { CalendarHeart } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
@@ -31,12 +32,12 @@ function Sidebar({ pathname }: { pathname: string }) {
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-border bg-surface lg:flex lg:flex-col">
       <div className="flex h-20 items-center gap-3 border-b border-border px-6">
-        <div className="flex size-11 items-center justify-center rounded-lg bg-brand text-lg font-bold text-brand-foreground">
-          PA
+        <div className="flex size-11 items-center justify-center rounded-2xl bg-rose-100 text-brand">
+          <CalendarHeart className="size-5" aria-hidden="true" />
         </div>
         <div>
           <p className="text-base font-semibold">PupiAgenda</p>
-          <p className="text-sm text-muted">Gestión clínica</p>
+          <p className="text-sm text-muted">Gestion clinica</p>
         </div>
       </div>
       <nav className="flex flex-1 flex-col gap-1 px-4 py-5" aria-label="Principal">
@@ -64,10 +65,10 @@ function TopHeader() {
         </div>
         <div className="flex items-center gap-3">
           <div className="hidden text-right sm:block">
-            <p className="text-sm font-medium">Equipo clínico</p>
+            <p className="text-sm font-medium">Equipo clinico</p>
             <p className="text-xs text-muted">Modo demo</p>
           </div>
-          <div className="flex size-10 items-center justify-center rounded-lg border border-border bg-background text-sm font-semibold">
+          <div className="flex size-10 items-center justify-center rounded-2xl border border-border bg-background text-sm font-semibold">
             EC
           </div>
         </div>
@@ -79,8 +80,8 @@ function TopHeader() {
 function MobileNavigation({ pathname }: { pathname: string }) {
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface px-2 pb-3 pt-2 shadow-[0_-10px_30px_rgba(15,23,42,0.08)] lg:hidden"
-      aria-label="Navegación móvil"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface px-2 pb-3 pt-2 shadow-[0_-10px_30px_rgba(159,61,90,0.12)] lg:hidden"
+      aria-label="Navegacion movil"
     >
       <div className="grid grid-cols-5 gap-1">
         {navigationItems.map((item) => {
@@ -92,11 +93,12 @@ function MobileNavigation({ pathname }: { pathname: string }) {
               href={item.href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex min-h-14 flex-col items-center justify-center gap-1 rounded-lg px-1 text-xs font-medium text-muted transition",
-                active && "bg-brand text-brand-foreground",
+                "flex min-h-14 flex-col items-center justify-center gap-1 rounded-2xl px-1 text-xs font-medium text-muted transition hover:bg-rose-50 hover:text-brand",
+                active &&
+                  "bg-brand text-brand-foreground shadow-sm hover:bg-[#87304a] hover:text-white",
               )}
             >
-              <span className="text-sm font-bold leading-none">{item.icon}</span>
+              <item.icon className="size-5" strokeWidth={2.2} aria-hidden="true" />
               <span className="max-w-full truncate">{item.shortLabel}</span>
             </Link>
           );
@@ -120,17 +122,19 @@ function NavigationLink({
       href={item.href}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-background hover:text-foreground",
-        active && "bg-brand text-brand-foreground hover:bg-brand hover:text-brand-foreground",
+        "group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-rose-50 hover:text-brand",
+        active &&
+          "bg-brand text-brand-foreground shadow-sm hover:bg-[#87304a] hover:text-white",
       )}
     >
       <span
         className={cn(
-          "flex size-8 items-center justify-center rounded-md bg-background text-xs font-bold text-muted",
-          active && "bg-white/15 text-brand-foreground",
+          "flex size-8 items-center justify-center rounded-xl bg-rose-50 text-muted transition group-hover:bg-rose-100 group-hover:text-brand",
+          active &&
+            "bg-white/15 text-brand-foreground group-hover:bg-white/20 group-hover:text-white",
         )}
       >
-        {item.icon}
+        <item.icon className="size-4" strokeWidth={2.2} aria-hidden="true" />
       </span>
       {item.label}
     </Link>
