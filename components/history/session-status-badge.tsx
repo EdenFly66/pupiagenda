@@ -1,13 +1,11 @@
 import {
   clinicalSessionStatusLabels,
   type ClinicalSessionStatus,
-} from "@/lib/mock-clinical-sessions";
+} from "@/lib/clinical-session-types";
 import { cn } from "@/lib/utils";
 
 const statusStyles: Record<ClinicalSessionStatus, string> = {
-  draft: "border-stone-200 bg-stone-100 text-stone-700",
   finalized: "border-emerald-200 bg-emerald-50 text-emerald-800",
-  pending: "border-violet-200 bg-violet-50 text-violet-800",
 };
 
 export function SessionStatusBadge({ status }: { status: ClinicalSessionStatus }) {

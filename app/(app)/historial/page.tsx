@@ -1,6 +1,5 @@
 import { ClinicalTimeline } from "@/components/history/clinical-timeline";
 import { PageHeader } from "@/components/ui/page-header";
-import { mockClinicalSessions } from "@/lib/mock-clinical-sessions";
 
 export default function HistoryPage() {
   return (
@@ -8,10 +7,10 @@ export default function HistoryPage() {
       <PageHeader
         eyebrow="Registro"
         title="Historial clinico"
-        description="Timeline mock para revisar sesiones, borradores y pendientes por paciente."
+        description="Timeline con sesiones reales guardadas en Supabase."
       />
 
-      <ClinicalTimeline sessions={mockClinicalSessions} />
+      <ClinicalTimeline />
     </div>
   );
 }
