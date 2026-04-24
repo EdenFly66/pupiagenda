@@ -1,34 +1,45 @@
 "use client";
 
+import { format } from "date-fns";
 import type { ChangeEvent } from "react";
 import { useEffect, useMemo, useState } from "react";
-import { format } from "date-fns";
 import { PatientSelector } from "@/components/sessions/patient-selector";
 import { SessionActions } from "@/components/sessions/session-actions";
 import { SessionDatePicker } from "@/components/sessions/session-date-picker";
 import { SessionTextarea } from "@/components/sessions/session-textarea";
+import type { ClinicalSessionStatus } from "@/lib/clinical-session-types";
 import { supabase } from "@/lib/supabase";
 
 type SessionFormState = {
   patientId: string;
   sessionDate: Date;
-  reason: string;
-  development: string;
-  clinicalObservations: string;
-  interventions: string;
   emotionalState: string;
-  assignedTasks: string;
+  axisEvaluation: string;
+  sessionContent: string;
+  clinicalHypothesis: string;
+  interventions: string;
+  objectiveProgress: string;
+  keyIdeas: string;
+  nextSessionPlan: string;
+  sessionSummary: string;
+  homeworkOrTasks: string;
+  observations: string;
 };
 
 const initialState: SessionFormState = {
   patientId: "",
   sessionDate: new Date(),
-  reason: "",
-  development: "",
-  clinicalObservations: "",
-  interventions: "",
   emotionalState: "",
-  assignedTasks: "",
+  axisEvaluation: "",
+  sessionContent: "",
+  clinicalHypothesis: "",
+  interventions: "",
+  objectiveProgress: "",
+  keyIdeas: "",
+  nextSessionPlan: "",
+  sessionSummary: "",
+  homeworkOrTasks: "",
+  observations: "",
 };
 
 const emotionalStates = [
@@ -51,7 +62,9 @@ export function SessionForm({
   const [isDirty, setIsDirty] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const [autoSaveStatus, setAutoSaveStatus] = useState("Autoguardado listo");
-  const [isSaving, setIsSaving] = useState(false);
+  const [savingStatus, setSavingStatus] = useState<ClinicalSessionStatus | null>(
+    null,
+  );
   const [saveError, setSaveError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -96,38 +109,6 @@ export function SessionForm({
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [isDirty]);
 
-  useEffect(() => {
-    const handleDocumentClick = (event: globalThis.MouseEvent) => {
-      if (!isDirty) {
-        return;
-      }
-
-      const target = event.target as Element | null;
-      const anchor = target?.closest("a") as HTMLAnchorElement | null;
-
-      if (!anchor || anchor.target || event.metaKey || event.ctrlKey) {
-        return;
-      }
-
-      const href = anchor.getAttribute("href");
-      if (!href || href.startsWith("#")) {
-        return;
-      }
-
-      const confirmed = window.confirm(
-        "Tienes cambios sin guardar. Deseas salir de esta sesion?",
-      );
-
-      if (!confirmed) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-    };
-
-    document.addEventListener("click", handleDocumentClick, true);
-    return () => document.removeEventListener("click", handleDocumentClick, true);
-  }, [isDirty]);
-
   function updateField(
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) {
@@ -147,7 +128,7 @@ export function SessionForm({
     setSuccessMessage(null);
   }
 
-  async function saveSession(kind: "final" | "draft") {
+  async function saveSession(status: ClinicalSessionStatus) {
     setSaveError(null);
     setSuccessMessage(null);
 
@@ -156,40 +137,42 @@ export function SessionForm({
       return;
     }
 
-    setIsSaving(true);
+    setSavingStatus(status);
 
     const payload = {
       patient_id: form.patientId,
       session_date: format(form.sessionDate, "yyyy-MM-dd"),
-      motivo: cleanOptional(form.reason),
-      desarrollo: cleanOptional(form.development),
-      observaciones: cleanOptional(form.clinicalObservations),
-      intervenciones: cleanOptional(form.interventions),
-      estado_emocional: cleanOptional(form.emotionalState),
-      tareas: cleanOptional(form.assignedTasks),
+      status,
+      emotional_state: cleanOptional(form.emotionalState),
+      axis_evaluation: cleanOptional(form.axisEvaluation),
+      session_content: cleanOptional(form.sessionContent),
+      clinical_hypothesis: cleanOptional(form.clinicalHypothesis),
+      interventions: cleanOptional(form.interventions),
+      objective_progress: cleanOptional(form.objectiveProgress),
+      key_ideas: cleanOptional(form.keyIdeas),
+      next_session_plan: cleanOptional(form.nextSessionPlan),
+      session_summary: cleanOptional(form.sessionSummary),
+      homework_or_tasks: cleanOptional(form.homeworkOrTasks),
+      observations: cleanOptional(form.observations),
     };
 
     const { error } = await supabase.from("clinical_sessions").insert(payload);
 
-    console.log("Resultado guardado sesion", { kind, payload, error });
+    console.log("Resultado guardado sesion", { status, payload, error });
 
     if (error) {
       setSaveError(error.message);
-      setIsSaving(false);
+      setSavingStatus(null);
       return;
     }
 
     const savedAt = formatTime();
     setLastSavedAt(savedAt);
-    setAutoSaveStatus(kind === "final" ? "Sesion guardada" : "Borrador guardado");
-    setSuccessMessage(
-      kind === "final"
-        ? "Sesion guardada correctamente."
-        : "Borrador guardado correctamente.",
-    );
+    setAutoSaveStatus("Sesion guardada");
+    setSuccessMessage(successMessageForStatus(status));
     setForm(getInitialForm(initialPatientId));
     setIsDirty(false);
-    setIsSaving(false);
+    setSavingStatus(null);
   }
 
   return (
@@ -214,55 +197,39 @@ export function SessionForm({
             {successMessage}
           </div>
         ) : null}
-
-        <label className="mt-6 block">
-          <span className="text-sm font-semibold text-foreground">
-            Motivo de la sesion
-          </span>
-          <input
-            name="reason"
-            value={form.reason}
-            onChange={updateField}
-            className="mt-2 h-14 w-full rounded-2xl border border-rose-100 bg-white/95 px-4 text-base text-foreground shadow-sm outline-none transition placeholder:text-stone-400 focus:border-brand focus:ring-4 focus:ring-rose-100"
-            placeholder="Ej: seguimiento semanal, evaluacion inicial, cierre de objetivos"
-          />
-        </label>
       </section>
 
       <section className="rounded-3xl border border-rose-100 bg-white/90 p-5 shadow-sm sm:p-7">
         <SessionTextarea
-          label="Desarrollo de la sesion"
-          name="development"
-          value={form.development}
+          label="Contenido de la sesion"
+          name="sessionContent"
+          value={form.sessionContent}
           onChange={updateField}
           rows={10}
-          placeholder="Escribe aqui el relato principal de la sesion, avances, dificultades, respuestas observadas y acuerdos relevantes."
-          helper="Campo principal. Dejalo amplio para escribir sin interrupciones."
+          placeholder="Registra el desarrollo clinico principal, hitos, respuestas y material relevante."
+          helper="Campo central del registro clinico."
         />
       </section>
 
       <section className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-3xl border border-rose-100 bg-white/90 p-5 shadow-sm sm:p-6">
-          <SessionTextarea
-            label="Observaciones clinicas"
-            name="clinicalObservations"
-            value={form.clinicalObservations}
-            onChange={updateField}
-            rows={7}
-            placeholder="Registra observaciones de comunicacion, conducta, participacion o contexto familiar."
-          />
-        </div>
-
-        <div className="rounded-3xl border border-rose-100 bg-white/90 p-5 shadow-sm sm:p-6">
-          <SessionTextarea
-            label="Intervenciones realizadas"
-            name="interventions"
-            value={form.interventions}
-            onChange={updateField}
-            rows={7}
-            placeholder="Describe tecnicas, ejercicios, apoyos, materiales o estrategias usadas durante la sesion."
-          />
-        </div>
+        <Card>
+          <SessionTextarea label="Evaluacion por eje" name="axisEvaluation" value={form.axisEvaluation} onChange={updateField} rows={6} placeholder="Eje emocional, conductual, vincular, familiar u otros." />
+        </Card>
+        <Card>
+          <SessionTextarea label="Hipotesis clinica" name="clinicalHypothesis" value={form.clinicalHypothesis} onChange={updateField} rows={6} placeholder="Hipotesis de trabajo actualizada." />
+        </Card>
+        <Card>
+          <SessionTextarea label="Intervenciones" name="interventions" value={form.interventions} onChange={updateField} rows={6} placeholder="Tecnicas, preguntas, actividades o estrategias usadas." />
+        </Card>
+        <Card>
+          <SessionTextarea label="Progreso de objetivos" name="objectiveProgress" value={form.objectiveProgress} onChange={updateField} rows={6} placeholder="Avances, retrocesos o indicadores observados." />
+        </Card>
+        <Card>
+          <SessionTextarea label="Ideas clave" name="keyIdeas" value={form.keyIdeas} onChange={updateField} rows={5} placeholder="Conceptos, frases o acuerdos relevantes." />
+        </Card>
+        <Card>
+          <SessionTextarea label="Plan proxima sesion" name="nextSessionPlan" value={form.nextSessionPlan} onChange={updateField} rows={5} placeholder="Foco sugerido para la siguiente sesion." />
+        </Card>
       </section>
 
       <section className="rounded-3xl border border-rose-100 bg-[#fffaf8] p-5 shadow-sm sm:p-6">
@@ -286,25 +253,27 @@ export function SessionForm({
             </select>
           </label>
 
-          <SessionTextarea
-            label="Tareas asignadas"
-            name="assignedTasks"
-            value={form.assignedTasks}
-            onChange={updateField}
-            rows={6}
-            placeholder="Anota ejercicios, recomendaciones o acuerdos para realizar antes de la proxima sesion."
-          />
+          <SessionTextarea label="Resumen de sesion" name="sessionSummary" value={form.sessionSummary} onChange={updateField} rows={5} placeholder="Resumen breve para visualizar en el historial." />
+          <SessionTextarea label="Tareas o acuerdos" name="homeworkOrTasks" value={form.homeworkOrTasks} onChange={updateField} rows={5} placeholder="Tareas, recomendaciones o acuerdos." />
+          <SessionTextarea label="Observaciones" name="observations" value={form.observations} onChange={updateField} rows={5} placeholder="Notas adicionales, contexto o alertas." />
         </div>
       </section>
 
       <SessionActions
         autoSaveLabel={autoSaveLabel}
         isDirty={isDirty}
-        isSaving={isSaving}
-        onSave={() => void saveSession("final")}
-        onDraft={() => void saveSession("draft")}
+        savingStatus={savingStatus}
+        onSave={(status) => void saveSession(status)}
       />
     </form>
+  );
+}
+
+function Card({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="rounded-3xl border border-rose-100 bg-white/90 p-5 shadow-sm sm:p-6">
+      {children}
+    </div>
   );
 }
 
@@ -319,6 +288,17 @@ function getInitialForm(patientId = ""): SessionFormState {
 function cleanOptional(value: string) {
   const trimmedValue = value.trim();
   return trimmedValue || null;
+}
+
+function successMessageForStatus(status: ClinicalSessionStatus) {
+  const messages: Record<ClinicalSessionStatus, string> = {
+    draft: "Borrador guardado.",
+    completed: "Sesion finalizada.",
+    cancelled: "Sesion cancelada.",
+    no_show: "Inasistencia registrada.",
+  };
+
+  return messages[status];
 }
 
 function formatTime() {

@@ -5,6 +5,7 @@ import { ClinicalTimelineItem } from "@/components/history/clinical-timeline-ite
 import { HistoryFilters } from "@/components/history/history-filters";
 import {
   mapClinicalSessionRow,
+  clinicalSessionSelectColumns,
   type ClinicalSessionRow,
   type ClinicalTimelineSession,
 } from "@/lib/clinical-session-types";
@@ -26,24 +27,7 @@ export function ClinicalTimeline() {
 
       const { data, error: queryError } = await supabase
         .from("clinical_sessions")
-        .select(
-          `
-            id,
-            patient_id,
-            session_date,
-            motivo,
-            desarrollo,
-            observaciones,
-            intervenciones,
-            estado_emocional,
-            tareas,
-            patients (
-              id,
-              first_name,
-              last_name
-            )
-          `,
-        )
+        .select(clinicalSessionSelectColumns)
         .order("session_date", { ascending: false });
 
       if (!active) {
@@ -91,10 +75,17 @@ export function ClinicalTimeline() {
           session.patientName,
           session.motivo,
           session.summary,
-          session.desarrollo,
-          session.intervenciones,
-          session.observaciones,
-          session.tareas,
+          session.status,
+          session.emotionalState,
+          session.axisEvaluation,
+          session.sessionContent,
+          session.clinicalHypothesis,
+          session.interventions,
+          session.objectiveProgress,
+          session.keyIdeas,
+          session.nextSessionPlan,
+          session.homeworkOrTasks,
+          session.observations,
         ].join(" "),
       );
 

@@ -48,10 +48,16 @@ export function ClinicalTimelineItem({
 
         {expanded ? (
           <div className="mt-6 grid gap-4 border-t border-rose-100 pt-5 lg:grid-cols-2">
-            <Detail title="Desarrollo de sesion" value={session.desarrollo} />
-            <Detail title="Intervenciones" value={session.intervenciones} />
-            <Detail title="Observaciones" value={session.observaciones} />
-            <Detail title="Tareas" value={session.tareas} />
+            <Detail title="Estado emocional" value={session.emotionalState} />
+            <Detail title="Evaluacion por eje" value={session.axisEvaluation} />
+            <Detail title="Contenido de sesion" value={session.sessionContent} />
+            <Detail title="Hipotesis clinica" value={session.clinicalHypothesis} />
+            <Detail title="Intervenciones" value={session.interventions} />
+            <Detail title="Progreso de objetivos" value={session.objectiveProgress} />
+            <Detail title="Ideas clave" value={session.keyIdeas} />
+            <Detail title="Plan proxima sesion" value={session.nextSessionPlan} />
+            <Detail title="Tareas" value={session.homeworkOrTasks} />
+            <Detail title="Observaciones" value={session.observations} />
           </div>
         ) : null}
 

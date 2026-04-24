@@ -1,6 +1,10 @@
 import Link from "next/link";
 import type { PatientRow } from "@/lib/patient-types";
-import { formatPatientCreatedAt, getPatientFullName } from "@/lib/patient-types";
+import {
+  displayValue,
+  formatPatientCreatedAt,
+  getPatientFullName,
+} from "@/lib/patient-types";
 
 export function PatientCard({ patient }: { patient: PatientRow }) {
   const fullName = getPatientFullName(patient);
@@ -15,7 +19,9 @@ export function PatientCard({ patient }: { patient: PatientRow }) {
           <h3 className="truncate text-lg font-semibold text-foreground">
             {fullName}
           </h3>
-          <p className="mt-1 text-sm text-muted">Registro de paciente</p>
+          <p className="mt-1 text-sm text-muted">
+            {displayValue(patient.pronouns)} / {displayValue(patient.status)}
+          </p>
         </div>
         <span className="rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-800">
           Supabase
@@ -23,8 +29,10 @@ export function PatientCard({ patient }: { patient: PatientRow }) {
       </div>
 
       <p className="mt-4 line-clamp-2 text-sm leading-6 text-muted">
-        Datos reales leidos desde la tabla patients. El perfil clinico se
-        completara cuando existan mas campos.
+        {displayValue(
+          patient.therapist_consultation_reason ||
+            patient.client_consultation_reason,
+        )}
       </p>
 
       <div className="mt-5 grid gap-3 text-sm">
@@ -32,6 +40,7 @@ export function PatientCard({ patient }: { patient: PatientRow }) {
         <InfoRow label="Apellido" value={patient.last_name ?? "Sin dato"} />
         <InfoRow label="Correo" value={patient.email ?? "Sin correo"} />
         <InfoRow label="Telefono" value={patient.phone ?? "Sin telefono"} />
+        <InfoRow label="Apoderado" value={displayValue(patient.guardian_name)} />
         <InfoRow label="Creado" value={formatPatientCreatedAt(patient.created_at)} />
       </div>
 

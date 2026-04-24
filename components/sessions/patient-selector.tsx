@@ -1,6 +1,10 @@
 import type { ChangeEvent } from "react";
 import { useEffect, useState } from "react";
-import { getPatientFullName, type PatientRow } from "@/lib/patient-types";
+import {
+  getPatientFullName,
+  patientSelectColumns,
+  type PatientRow,
+} from "@/lib/patient-types";
 import { supabase } from "@/lib/supabase";
 
 type PatientSelectorProps = {
@@ -22,7 +26,7 @@ export function PatientSelector({ value, onChange }: PatientSelectorProps) {
 
       const { data, error: queryError } = await supabase
         .from("patients")
-        .select("id, first_name, last_name, email, phone, created_at")
+        .select(patientSelectColumns)
         .order("created_at", { ascending: false });
 
       if (!active) {

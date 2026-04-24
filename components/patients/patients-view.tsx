@@ -3,7 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { PatientCard } from "@/components/patients/patient-card";
 import { PatientSearch } from "@/components/patients/patient-search";
-import { getPatientFullName, type PatientRow } from "@/lib/patient-types";
+import {
+  getPatientFullName,
+  patientSelectColumns,
+  type PatientRow,
+} from "@/lib/patient-types";
 import { supabase } from "@/lib/supabase";
 
 export function PatientsView() {
@@ -21,7 +25,7 @@ export function PatientsView() {
 
       const { data, error: queryError } = await supabase
         .from("patients")
-        .select("id, first_name, last_name, email, phone, created_at")
+        .select(patientSelectColumns)
         .order("created_at", { ascending: false });
 
       if (!active) {
@@ -56,6 +60,11 @@ export function PatientsView() {
           patient.last_name,
           patient.email,
           patient.phone,
+          patient.pronouns,
+          patient.status,
+          patient.guardian_name,
+          patient.therapist_consultation_reason,
+          patient.client_consultation_reason,
         ].join(" "),
       );
 

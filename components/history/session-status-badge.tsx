@@ -5,7 +5,10 @@ import {
 import { cn } from "@/lib/utils";
 
 const statusStyles: Record<ClinicalSessionStatus, string> = {
-  finalized: "border-emerald-200 bg-emerald-50 text-emerald-800",
+  draft: "border-stone-200 bg-stone-100 text-stone-700",
+  completed: "border-emerald-200 bg-emerald-50 text-emerald-800",
+  cancelled: "border-rose-200 bg-rose-50 text-rose-800",
+  no_show: "border-violet-200 bg-violet-50 text-violet-800",
 };
 
 export function SessionStatusBadge({ status }: { status: ClinicalSessionStatus }) {
