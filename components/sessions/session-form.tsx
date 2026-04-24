@@ -40,8 +40,14 @@ const emotionalStates = [
   "Variable",
 ];
 
-export function SessionForm() {
-  const [form, setForm] = useState<SessionFormState>(() => getInitialForm());
+export function SessionForm({
+  initialPatientId = "",
+}: {
+  initialPatientId?: string;
+}) {
+  const [form, setForm] = useState<SessionFormState>(() =>
+    getInitialForm(initialPatientId),
+  );
   const [isDirty, setIsDirty] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const [autoSaveStatus, setAutoSaveStatus] = useState("Autoguardado listo");
@@ -181,7 +187,7 @@ export function SessionForm() {
         ? "Sesion guardada correctamente."
         : "Borrador guardado correctamente.",
     );
-    setForm(getInitialForm());
+    setForm(getInitialForm(initialPatientId));
     setIsDirty(false);
     setIsSaving(false);
   }
@@ -302,9 +308,10 @@ export function SessionForm() {
   );
 }
 
-function getInitialForm(): SessionFormState {
+function getInitialForm(patientId = ""): SessionFormState {
   return {
     ...initialState,
+    patientId,
     sessionDate: new Date(),
   };
 }

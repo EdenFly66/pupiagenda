@@ -1,9 +1,16 @@
 "use client";
 
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/ui/page-header";
 import { SectionCard } from "@/components/ui/section-card";
+import {
+  mapClinicalSessionRow,
+  type ClinicalSessionRow,
+  type ClinicalTimelineSession,
+} from "@/lib/clinical-session-types";
 import {
   formatPatientCreatedAt,
   getPatientFullName,
@@ -13,37 +20,72 @@ import { supabase } from "@/lib/supabase";
 
 export function PatientProfileView({ patientId }: { patientId: string }) {
   const [patient, setPatient] = useState<PatientRow | null>(null);
+  const [sessions, setSessions] = useState<ClinicalTimelineSession[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
 
-    async function loadPatient() {
+    async function loadProfile() {
       setLoading(true);
       setError(null);
 
-      const { data, error: queryError } = await supabase
-        .from("patients")
-        .select("id, first_name, last_name, email, phone, created_at")
-        .eq("id", patientId)
-        .maybeSingle();
+      const [patientResult, sessionsResult] = await Promise.all([
+        supabase
+          .from("patients")
+          .select("id, first_name, last_name, email, phone, created_at")
+          .eq("id", patientId)
+          .maybeSingle(),
+        supabase
+          .from("clinical_sessions")
+          .select(
+            `
+              id,
+              patient_id,
+              session_date,
+              motivo,
+              desarrollo,
+              observaciones,
+              intervenciones,
+              estado_emocional,
+              tareas,
+              patients (
+                id,
+                first_name,
+                last_name
+              )
+            `,
+          )
+          .eq("patient_id", patientId)
+          .order("session_date", { ascending: false }),
+      ]);
 
       if (!active) {
         return;
       }
 
-      if (queryError) {
+      if (patientResult.error) {
         setPatient(null);
-        setError(queryError.message);
+        setSessions([]);
+        setError(patientResult.error.message);
+      } else if (sessionsResult.error) {
+        setPatient(patientResult.data);
+        setSessions([]);
+        setError(sessionsResult.error.message);
       } else {
-        setPatient(data);
+        setPatient(patientResult.data);
+        setSessions(
+          ((sessionsResult.data as ClinicalSessionRow[] | null) ?? []).map(
+            mapClinicalSessionRow,
+          ),
+        );
       }
 
       setLoading(false);
     }
 
-    loadPatient();
+    loadProfile();
 
     return () => {
       active = false;
@@ -87,7 +129,7 @@ export function PatientProfileView({ patientId }: { patientId: string }) {
         eyebrow="Perfil de paciente"
         title={getPatientFullName(patient)}
         description="Ficha basica leida desde la tabla patients en Supabase."
-        action={<BackButton />}
+        action={<ProfileActions patientId={patient.id} />}
       />
 
       <div className="grid gap-4 lg:grid-cols-[1fr_0.8fr]">
@@ -98,20 +140,50 @@ export function PatientProfileView({ patientId }: { patientId: string }) {
             <Detail label="Apellido" value={patient.last_name ?? "Sin dato"} />
             <Detail label="Correo" value={patient.email ?? "Sin correo"} />
             <Detail label="Telefono" value={patient.phone ?? "Sin telefono"} />
+            <Detail
+              label="Fecha de creacion"
+              value={formatPatientCreatedAt(patient.created_at)}
+            />
           </dl>
         </SectionCard>
 
         <SectionCard className="rounded-3xl border-rose-100 bg-[#fffaf8]">
-          <h3 className="text-base font-semibold">Registro</h3>
-          <p className="mt-3 text-sm leading-6 text-muted">
-            Creado el {formatPatientCreatedAt(patient.created_at)}.
-          </p>
-          <p className="mt-4 text-sm leading-6 text-muted">
-            La informacion clinica se agregara cuando existan mas campos y
-            backend de sesiones.
-          </p>
+          <h3 className="text-base font-semibold">Resumen clinico</h3>
+          <div className="mt-6 grid gap-4">
+            <Detail label="Total de sesiones" value={`${sessions.length}`} />
+            <Detail
+              label="Ultima sesion"
+              value={formatSessionDate(sessions[0]?.sessionDate ?? null)}
+            />
+          </div>
         </SectionCard>
       </div>
+
+      <SectionCard className="rounded-3xl border-rose-100 bg-white/90">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h3 className="text-base font-semibold">Sesiones de la paciente</h3>
+            <p className="mt-1 text-sm text-muted">
+              Timeline breve con las sesiones asociadas a esta ficha.
+            </p>
+          </div>
+        </div>
+
+        {sessions.length > 0 ? (
+          <div className="mt-6 space-y-4">
+            {sessions.map((session) => (
+              <PatientSessionItem key={session.id} session={session} />
+            ))}
+          </div>
+        ) : (
+          <div className="mt-6 rounded-3xl border border-dashed border-rose-200 bg-[#fffaf8] p-8 text-center">
+            <p className="font-semibold">Sin sesiones registradas.</p>
+            <p className="mt-2 text-sm text-muted">
+              Crea una nueva sesion para comenzar el historial de esta paciente.
+            </p>
+          </div>
+        )}
+      </SectionCard>
     </div>
   );
 }
@@ -135,11 +207,30 @@ function PatientProfileMessage({
   );
 }
 
+function ProfileActions({ patientId }: { patientId: string }) {
+  return (
+    <div className="flex flex-col gap-3 sm:flex-row">
+      <Link
+        href="/pacientes"
+        className="inline-flex h-11 items-center justify-center rounded-2xl border border-rose-100 bg-white px-5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50"
+      >
+        Volver
+      </Link>
+      <Link
+        href={`/sesiones/nueva?patientId=${patientId}`}
+        className="inline-flex h-11 items-center justify-center rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white"
+      >
+        Nueva sesion
+      </Link>
+    </div>
+  );
+}
+
 function BackButton() {
   return (
     <Link
       href="/pacientes"
-      className="inline-flex h-11 items-center rounded-2xl border border-rose-100 bg-white px-5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50"
+      className="inline-flex h-11 items-center justify-center rounded-2xl border border-rose-100 bg-white px-5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50"
     >
       Volver
     </Link>
@@ -155,4 +246,61 @@ function Detail({ label, value }: { label: string; value: string }) {
       <dd className="mt-2 text-sm font-medium text-foreground">{value}</dd>
     </div>
   );
+}
+
+function PatientSessionItem({
+  session,
+}: {
+  session: ClinicalTimelineSession;
+}) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <article className="rounded-3xl border border-rose-100 bg-[#fffaf8] p-5">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p className="text-sm font-semibold text-brand">
+            {formatSessionDate(session.sessionDate)}
+          </p>
+          <h4 className="mt-2 text-base font-semibold">{session.motivo}</h4>
+        </div>
+        <button
+          type="button"
+          onClick={() => setExpanded((current) => !current)}
+          className="inline-flex h-10 items-center justify-center rounded-2xl bg-rose-50 px-4 text-sm font-semibold text-brand transition hover:bg-rose-100"
+        >
+          {expanded ? "Ocultar detalle" : "Ver detalle"}
+        </button>
+      </div>
+      <p className="mt-4 text-sm leading-6 text-muted">{session.summary}</p>
+
+      {expanded ? (
+        <div className="mt-5 grid gap-4 border-t border-rose-100 pt-5 lg:grid-cols-2">
+          <SessionDetail title="Desarrollo" value={session.desarrollo} />
+          <SessionDetail title="Intervenciones" value={session.intervenciones} />
+          <SessionDetail title="Observaciones" value={session.observaciones} />
+          <SessionDetail title="Tareas" value={session.tareas} />
+        </div>
+      ) : null}
+    </article>
+  );
+}
+
+function SessionDetail({ title, value }: { title: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-white p-4">
+      <p className="text-sm font-semibold">{title}</p>
+      <p className="mt-2 text-sm leading-6 text-muted">{value}</p>
+    </div>
+  );
+}
+
+function formatSessionDate(value: string | null) {
+  if (!value) {
+    return "Sin sesiones";
+  }
+
+  return format(new Date(`${value}T12:00:00`), "d 'de' MMMM yyyy", {
+    locale: es,
+  });
 }
