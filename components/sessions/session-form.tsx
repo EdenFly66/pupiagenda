@@ -2,29 +2,18 @@
 
 import { format } from "date-fns";
 import type { ChangeEvent } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { PatientSelector } from "@/components/sessions/patient-selector";
 import { SessionActions } from "@/components/sessions/session-actions";
 import { SessionDatePicker } from "@/components/sessions/session-date-picker";
 import { SessionTextarea } from "@/components/sessions/session-textarea";
+import {
+  draftToFormState,
+  useSessionDraftAutosave,
+} from "@/components/sessions/use-session-draft-autosave";
 import type { ClinicalSessionStatus } from "@/lib/clinical-session-types";
+import type { SessionFormState } from "@/lib/session-form-types";
 import { supabase } from "@/lib/supabase";
-
-type SessionFormState = {
-  patientId: string;
-  sessionDate: Date;
-  emotionalState: string;
-  axisEvaluation: string;
-  sessionContent: string;
-  clinicalHypothesis: string;
-  interventions: string;
-  objectiveProgress: string;
-  keyIdeas: string;
-  nextSessionPlan: string;
-  sessionSummary: string;
-  homeworkOrTasks: string;
-  observations: string;
-};
 
 const initialState: SessionFormState = {
   patientId: "",
@@ -60,40 +49,22 @@ export function SessionForm({
     getInitialForm(initialPatientId),
   );
   const [isDirty, setIsDirty] = useState(false);
-  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
-  const [autoSaveStatus, setAutoSaveStatus] = useState("Autoguardado listo");
   const [savingStatus, setSavingStatus] = useState<ClinicalSessionStatus | null>(
     null,
   );
   const [saveError, setSaveError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
-  const autoSaveLabel = useMemo(() => {
-    if (autoSaveStatus === "Guardando") {
-      return "Autoguardando...";
-    }
-
-    if (lastSavedAt) {
-      return `Autoguardado a las ${lastSavedAt}`;
-    }
-
-    return autoSaveStatus;
-  }, [autoSaveStatus, lastSavedAt]);
-
-  useEffect(() => {
-    if (!isDirty) {
-      return;
-    }
-
-    const timeout = window.setTimeout(() => {
-      const savedAt = formatTime();
-      console.log("Autoguardado simulado", form);
-      setLastSavedAt(savedAt);
-      setAutoSaveStatus("Guardado");
-    }, 900);
-
-    return () => window.clearTimeout(timeout);
-  }, [form, isDirty]);
+  const {
+    clearDraft,
+    dismissRestorePrompt,
+    draftToRestore,
+    lastSavedAt,
+    status: draftStatus,
+    storageError,
+  } = useSessionDraftAutosave({
+    enabled: isDirty && savingStatus === null,
+    form,
+  });
 
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -113,19 +84,36 @@ export function SessionForm({
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) {
     const { name, value } = event.target;
+    dismissRestorePrompt();
     setForm((current) => ({ ...current, [name]: value }));
     setIsDirty(true);
-    setAutoSaveStatus("Guardando");
     setSaveError(null);
     setSuccessMessage(null);
   }
 
   function updateSessionDate(date: Date) {
+    dismissRestorePrompt();
     setForm((current) => ({ ...current, sessionDate: date }));
     setIsDirty(true);
-    setAutoSaveStatus("Guardando");
     setSaveError(null);
     setSuccessMessage(null);
+  }
+
+  function restoreDraft() {
+    if (!draftToRestore) {
+      return;
+    }
+
+    setForm(draftToFormState(draftToRestore));
+    setIsDirty(true);
+    setSaveError(null);
+    setSuccessMessage("Borrador local restaurado.");
+    dismissRestorePrompt();
+  }
+
+  function discardDraft() {
+    clearDraft();
+    setSuccessMessage("Borrador local descartado.");
   }
 
   async function saveSession(status: ClinicalSessionStatus) {
@@ -166,18 +154,49 @@ export function SessionForm({
       return;
     }
 
-    const savedAt = formatTime();
-    setLastSavedAt(savedAt);
-    setAutoSaveStatus("Sesion guardada");
     setSuccessMessage(successMessageForStatus(status));
     setForm(getInitialForm(initialPatientId));
     setIsDirty(false);
     setSavingStatus(null);
+    clearDraft();
   }
+
+  const draftLabel = getDraftStatusLabel(draftStatus, lastSavedAt, isDirty);
 
   return (
     <form className="mx-auto max-w-5xl space-y-8">
       <section className="rounded-3xl border border-rose-100 bg-[#fffaf8] p-5 shadow-sm sm:p-6">
+        {draftToRestore ? (
+          <div className="mb-5 rounded-3xl border border-rose-200 bg-white/90 p-4 shadow-sm">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="font-semibold text-foreground">
+                  Hay un borrador local sin guardar.
+                </p>
+                <p className="mt-1 text-sm text-muted">
+                  Puedes restaurarlo para continuar o descartarlo.
+                </p>
+              </div>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={discardDraft}
+                  className="inline-flex h-10 items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground transition hover:bg-rose-50"
+                >
+                  Descartar
+                </button>
+                <button
+                  type="button"
+                  onClick={restoreDraft}
+                  className="inline-flex h-10 items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground transition hover:bg-[#87304a] hover:text-white"
+                >
+                  Restaurar borrador
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
+
         <div className="grid gap-5 md:grid-cols-[1fr_220px]">
           <PatientSelector value={form.patientId} onChange={updateField} />
           <SessionDatePicker
@@ -195,6 +214,12 @@ export function SessionForm({
         {successMessage ? (
           <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-900">
             {successMessage}
+          </div>
+        ) : null}
+
+        {storageError ? (
+          <div className="mt-5 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm leading-6 text-rose-900">
+            No se pudo guardar el borrador local: {storageError}
           </div>
         ) : null}
       </section>
@@ -260,7 +285,7 @@ export function SessionForm({
       </section>
 
       <SessionActions
-        autoSaveLabel={autoSaveLabel}
+        autoSaveLabel={draftLabel}
         isDirty={isDirty}
         savingStatus={savingStatus}
         onSave={(status) => void saveSession(status)}
@@ -301,9 +326,35 @@ function successMessageForStatus(status: ClinicalSessionStatus) {
   return messages[status];
 }
 
-function formatTime() {
+function getDraftStatusLabel(
+  status: string,
+  lastSavedAt: string | null,
+  isDirty: boolean,
+) {
+  if (!isDirty && status === "idle") {
+    return "Borrador local listo";
+  }
+
+  if (status === "pending" || status === "saving") {
+    return "Guardando borrador...";
+  }
+
+  if (status === "saved") {
+    return lastSavedAt
+      ? `Borrador guardado a las ${formatDraftTime(lastSavedAt)}`
+      : "Borrador guardado";
+  }
+
+  if (status === "error") {
+    return "Cambios sin guardar";
+  }
+
+  return "Cambios sin guardar";
+}
+
+function formatDraftTime(value: string) {
   return new Intl.DateTimeFormat("es-CL", {
     hour: "2-digit",
     minute: "2-digit",
-  }).format(new Date());
+  }).format(new Date(value));
 }
