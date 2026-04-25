@@ -300,13 +300,21 @@ function PatientSessionItem({
             <SessionStatusBadge status={session.status} />
           </div>
         </div>
-        <button
-          type="button"
-          onClick={() => setExpanded((current) => !current)}
-          className="inline-flex h-10 items-center justify-center rounded-2xl bg-rose-50 px-4 text-sm font-semibold text-brand transition hover:bg-rose-100"
-        >
-          {expanded ? "Ocultar detalle" : "Ver detalle"}
-        </button>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <button
+            type="button"
+            onClick={() => setExpanded((current) => !current)}
+            className="inline-flex h-10 items-center justify-center rounded-2xl bg-rose-50 px-4 text-sm font-semibold text-brand transition hover:bg-rose-100"
+          >
+            {expanded ? "Ocultar detalle" : "Ver detalle"}
+          </button>
+          <Link
+            href={`/sesiones/${session.id}/editar`}
+            className="inline-flex h-10 items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground transition hover:bg-[#87304a] hover:text-white"
+          >
+            Editar sesion
+          </Link>
+        </div>
       </div>
       <p className="mt-4 text-sm leading-6 text-muted">{session.summary}</p>
 

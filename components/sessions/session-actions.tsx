@@ -1,19 +1,26 @@
+import type { ReactNode } from "react";
 import type { ClinicalSessionStatus } from "@/lib/clinical-session-types";
 
 type SessionActionsProps = {
   autoSaveLabel: string;
   isDirty: boolean;
+  mode?: "create" | "edit";
   savingStatus: ClinicalSessionStatus | null;
+  savingChanges: boolean;
   onSave: (status: ClinicalSessionStatus) => void;
+  onSaveChanges?: () => void;
 };
 
 export function SessionActions({
   autoSaveLabel,
   isDirty,
+  mode = "create",
   savingStatus,
+  savingChanges,
   onSave,
+  onSaveChanges,
 }: SessionActionsProps) {
-  const isSaving = savingStatus !== null;
+  const isSaving = savingStatus !== null || savingChanges;
 
   return (
     <div className="sticky bottom-20 z-10 rounded-3xl border border-rose-100 bg-white/90 p-4 shadow-lg shadow-rose-100/50 backdrop-blur lg:bottom-6">
@@ -23,13 +30,23 @@ export function SessionActions({
           {isDirty ? " / cambios sin guardar" : ""}
         </p>
         <div className="grid gap-3 sm:grid-cols-2 xl:flex xl:flex-row">
+          {mode === "edit" && onSaveChanges ? (
+            <ActionButton
+              disabled={isSaving}
+              loading={savingChanges}
+              onClick={onSaveChanges}
+              variant="secondary"
+            >
+              Guardar cambios
+            </ActionButton>
+          ) : null}
           <ActionButton
             disabled={isSaving}
             loading={savingStatus === "draft"}
             onClick={() => onSave("draft")}
             variant="secondary"
           >
-            Guardar borrador
+            {mode === "edit" ? "Guardar como borrador" : "Guardar borrador"}
           </ActionButton>
           <ActionButton
             disabled={isSaving}
@@ -68,7 +85,7 @@ function ActionButton({
   onClick,
   variant,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
   disabled: boolean;
   loading: boolean;
   onClick: () => void;

@@ -1,17 +1,21 @@
 "use client";
 
 import { format } from "date-fns";
-import type { ChangeEvent } from "react";
+import type { ChangeEvent, ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { PatientSelector } from "@/components/sessions/patient-selector";
 import { SessionActions } from "@/components/sessions/session-actions";
 import { SessionDatePicker } from "@/components/sessions/session-date-picker";
 import { SessionTextarea } from "@/components/sessions/session-textarea";
 import {
+  NEW_SESSION_DRAFT_STORAGE_KEY,
   draftToFormState,
   useSessionDraftAutosave,
 } from "@/components/sessions/use-session-draft-autosave";
-import type { ClinicalSessionStatus } from "@/lib/clinical-session-types";
+import {
+  clinicalSessionStatusLabels,
+  type ClinicalSessionStatus,
+} from "@/lib/clinical-session-types";
 import type { SessionFormState } from "@/lib/session-form-types";
 import { supabase } from "@/lib/supabase";
 
@@ -42,16 +46,29 @@ const emotionalStates = [
 
 export function SessionForm({
   initialPatientId = "",
+  initialStatus = "draft",
+  initialValues,
+  mode = "create",
+  patientName,
+  sessionId,
 }: {
   initialPatientId?: string;
+  initialStatus?: ClinicalSessionStatus;
+  initialValues?: SessionFormState;
+  mode?: "create" | "edit";
+  patientName?: string;
+  sessionId?: string;
 }) {
   const [form, setForm] = useState<SessionFormState>(() =>
-    getInitialForm(initialPatientId),
+    initialValues ?? getInitialForm(initialPatientId),
   );
+  const [currentStatus, setCurrentStatus] =
+    useState<ClinicalSessionStatus>(initialStatus);
   const [isDirty, setIsDirty] = useState(false);
   const [savingStatus, setSavingStatus] = useState<ClinicalSessionStatus | null>(
     null,
   );
+  const [savingChanges, setSavingChanges] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const {
@@ -62,8 +79,12 @@ export function SessionForm({
     status: draftStatus,
     storageError,
   } = useSessionDraftAutosave({
-    enabled: isDirty && savingStatus === null,
+    enabled: isDirty && savingStatus === null && !savingChanges,
     form,
+    storageKey:
+      mode === "edit" && sessionId
+        ? `pupiagenda:clinical-session-draft:edit:${sessionId}:v1`
+        : NEW_SESSION_DRAFT_STORAGE_KEY,
   });
 
   useEffect(() => {
@@ -127,24 +148,12 @@ export function SessionForm({
 
     setSavingStatus(status);
 
-    const payload = {
-      patient_id: form.patientId,
-      session_date: format(form.sessionDate, "yyyy-MM-dd"),
-      status,
-      emotional_state: cleanOptional(form.emotionalState),
-      axis_evaluation: cleanOptional(form.axisEvaluation),
-      session_content: cleanOptional(form.sessionContent),
-      clinical_hypothesis: cleanOptional(form.clinicalHypothesis),
-      interventions: cleanOptional(form.interventions),
-      objective_progress: cleanOptional(form.objectiveProgress),
-      key_ideas: cleanOptional(form.keyIdeas),
-      next_session_plan: cleanOptional(form.nextSessionPlan),
-      session_summary: cleanOptional(form.sessionSummary),
-      homework_or_tasks: cleanOptional(form.homeworkOrTasks),
-      observations: cleanOptional(form.observations),
-    };
+    const payload = toSessionPayload(form, status);
 
-    const { error } = await supabase.from("clinical_sessions").insert(payload);
+    const { error } =
+      mode === "edit" && sessionId
+        ? await supabase.from("clinical_sessions").update(payload).eq("id", sessionId)
+        : await supabase.from("clinical_sessions").insert(payload);
 
     console.log("Resultado guardado sesion", { status, payload, error });
 
@@ -154,10 +163,46 @@ export function SessionForm({
       return;
     }
 
+    setCurrentStatus(status);
     setSuccessMessage(successMessageForStatus(status));
-    setForm(getInitialForm(initialPatientId));
+    setForm(mode === "edit" ? form : getInitialForm(initialPatientId));
     setIsDirty(false);
     setSavingStatus(null);
+    clearDraft();
+  }
+
+  async function saveChanges() {
+    setSaveError(null);
+    setSuccessMessage(null);
+
+    if (!sessionId) {
+      setSaveError("No se encontro el id de la sesion a editar.");
+      return;
+    }
+
+    setSavingChanges(true);
+
+    const payload = toSessionPayload(form, currentStatus);
+    const { error } = await supabase
+      .from("clinical_sessions")
+      .update(payload)
+      .eq("id", sessionId);
+
+    console.log("Resultado actualizacion sesion", {
+      sessionId,
+      payload,
+      error,
+    });
+
+    if (error) {
+      setSaveError(error.message);
+      setSavingChanges(false);
+      return;
+    }
+
+    setSuccessMessage("Cambios guardados.");
+    setIsDirty(false);
+    setSavingChanges(false);
     clearDraft();
   }
 
@@ -198,7 +243,25 @@ export function SessionForm({
         ) : null}
 
         <div className="grid gap-5 md:grid-cols-[1fr_220px]">
-          <PatientSelector value={form.patientId} onChange={updateField} />
+          {mode === "edit" ? (
+            <div className="rounded-2xl border border-rose-100 bg-white/80 px-4 py-3">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-foreground">
+                    Paciente
+                  </p>
+                  <p className="mt-1 text-sm text-muted">
+                    {patientName ?? "Paciente asociado"}
+                  </p>
+                </div>
+                <span className="inline-flex w-fit rounded-full bg-rose-50 px-3 py-1 text-xs font-semibold text-brand">
+                  {clinicalSessionStatusLabels[currentStatus]}
+                </span>
+              </div>
+            </div>
+          ) : (
+            <PatientSelector value={form.patientId} onChange={updateField} />
+          )}
           <SessionDatePicker
             value={form.sessionDate}
             onChange={updateSessionDate}
@@ -287,14 +350,17 @@ export function SessionForm({
       <SessionActions
         autoSaveLabel={draftLabel}
         isDirty={isDirty}
+        mode={mode}
         savingStatus={savingStatus}
+        savingChanges={savingChanges}
         onSave={(status) => void saveSession(status)}
+        onSaveChanges={mode === "edit" ? () => void saveChanges() : undefined}
       />
     </form>
   );
 }
 
-function Card({ children }: { children: React.ReactNode }) {
+function Card({ children }: { children: ReactNode }) {
   return (
     <div className="rounded-3xl border border-rose-100 bg-white/90 p-5 shadow-sm sm:p-6">
       {children}
@@ -313,6 +379,25 @@ function getInitialForm(patientId = ""): SessionFormState {
 function cleanOptional(value: string) {
   const trimmedValue = value.trim();
   return trimmedValue || null;
+}
+
+function toSessionPayload(form: SessionFormState, status: ClinicalSessionStatus) {
+  return {
+    patient_id: form.patientId,
+    session_date: format(form.sessionDate, "yyyy-MM-dd"),
+    status,
+    emotional_state: cleanOptional(form.emotionalState),
+    axis_evaluation: cleanOptional(form.axisEvaluation),
+    session_content: cleanOptional(form.sessionContent),
+    clinical_hypothesis: cleanOptional(form.clinicalHypothesis),
+    interventions: cleanOptional(form.interventions),
+    objective_progress: cleanOptional(form.objectiveProgress),
+    key_ideas: cleanOptional(form.keyIdeas),
+    next_session_plan: cleanOptional(form.nextSessionPlan),
+    session_summary: cleanOptional(form.sessionSummary),
+    homework_or_tasks: cleanOptional(form.homeworkOrTasks),
+    observations: cleanOptional(form.observations),
+  };
 }
 
 function successMessageForStatus(status: ClinicalSessionStatus) {

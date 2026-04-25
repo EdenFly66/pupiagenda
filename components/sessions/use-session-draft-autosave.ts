@@ -7,7 +7,8 @@ import type {
   StoredSessionDraft,
 } from "@/lib/session-form-types";
 
-const DRAFT_STORAGE_KEY = "pupiagenda:clinical-session-draft:v1";
+export const NEW_SESSION_DRAFT_STORAGE_KEY =
+  "pupiagenda:clinical-session-draft:new:v1";
 const AUTOSAVE_DELAY_MS = 1000;
 
 export type DraftAutosaveStatus =
@@ -20,9 +21,11 @@ export type DraftAutosaveStatus =
 export function useSessionDraftAutosave({
   form,
   enabled,
+  storageKey = NEW_SESSION_DRAFT_STORAGE_KEY,
 }: {
   form: SessionFormState;
   enabled: boolean;
+  storageKey?: string;
 }) {
   const [status, setStatus] = useState<DraftAutosaveStatus>("idle");
   const [draftToRestore, setDraftToRestore] = useState<StoredSessionDraft | null>(
@@ -34,7 +37,7 @@ export function useSessionDraftAutosave({
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
-      const draft = readStoredDraft();
+      const draft = readStoredDraft(storageKey);
 
       if (draft) {
         setDraftToRestore(draft);
@@ -43,7 +46,7 @@ export function useSessionDraftAutosave({
     }, 0);
 
     return () => window.clearTimeout(timeout);
-  }, []);
+  }, [storageKey]);
 
   useEffect(() => {
     if (!enabled || draftToRestore || !hasContent) {
@@ -55,7 +58,7 @@ export function useSessionDraftAutosave({
 
       try {
         const draft = toStoredDraft(form);
-        window.localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
+        window.localStorage.setItem(storageKey, JSON.stringify(draft));
         setLastSavedAt(draft.saved_at);
         setStorageError(null);
         setStatus("saved");
@@ -68,11 +71,11 @@ export function useSessionDraftAutosave({
     }, AUTOSAVE_DELAY_MS);
 
     return () => window.clearTimeout(timeout);
-  }, [draftToRestore, enabled, form, hasContent]);
+  }, [draftToRestore, enabled, form, hasContent, storageKey]);
 
   function clearDraft() {
     try {
-      window.localStorage.removeItem(DRAFT_STORAGE_KEY);
+      window.localStorage.removeItem(storageKey);
     } catch {
       // Ignored intentionally. A failed cleanup should not block the saved session.
     }
@@ -114,9 +117,9 @@ export function draftToFormState(draft: StoredSessionDraft): SessionFormState {
   };
 }
 
-function readStoredDraft() {
+function readStoredDraft(storageKey: string) {
   try {
-    const rawDraft = window.localStorage.getItem(DRAFT_STORAGE_KEY);
+    const rawDraft = window.localStorage.getItem(storageKey);
 
     if (!rawDraft) {
       return null;
@@ -125,14 +128,14 @@ function readStoredDraft() {
     const parsedDraft = JSON.parse(rawDraft);
 
     if (!isStoredSessionDraft(parsedDraft)) {
-      window.localStorage.removeItem(DRAFT_STORAGE_KEY);
+      window.localStorage.removeItem(storageKey);
       return null;
     }
 
     return parsedDraft;
   } catch {
     try {
-      window.localStorage.removeItem(DRAFT_STORAGE_KEY);
+      window.localStorage.removeItem(storageKey);
     } catch {
       // Ignore cleanup failure after invalid JSON.
     }

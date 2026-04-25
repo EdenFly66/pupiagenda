@@ -31,14 +31,22 @@ export function ClinicalTimelineItem({
               {formattedDate}
             </p>
           </div>
-          {session.patientId ? (
+          <div className="flex flex-col gap-2 sm:flex-row">
+            {session.patientId ? (
+              <Link
+                href={`/pacientes/${session.patientId}`}
+                className="inline-flex h-10 items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50"
+              >
+                Ver paciente
+              </Link>
+            ) : null}
             <Link
-              href={`/pacientes/${session.patientId}`}
-              className="inline-flex h-10 items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50"
+              href={`/sesiones/${session.id}/editar`}
+              className="inline-flex h-10 items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white"
             >
-              Ver paciente
+              Editar sesion
             </Link>
-          ) : null}
+          </div>
         </div>
 
         <div className="mt-5 space-y-3">
