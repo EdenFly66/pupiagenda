@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { SessionStatusBadge } from "@/components/history/session-status-badge";
+import { SessionPDFExportButton } from "@/components/pdf/session-pdf-export-button";
 import { PatientDocumentsSection } from "@/components/patients/patient-documents-section";
 import { PageHeader } from "@/components/ui/page-header";
 import { SectionCard } from "@/components/ui/section-card";
@@ -528,6 +529,7 @@ function PatientSessionItem({
           >
             Editar sesion
           </Link>
+          <SessionPDFExportButton session={session} />
         </div>
       </div>
       <p className="mt-4 text-sm leading-6 text-muted">{session.summary}</p>

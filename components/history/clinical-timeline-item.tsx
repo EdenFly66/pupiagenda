@@ -5,6 +5,7 @@ import { es } from "date-fns/locale";
 import Link from "next/link";
 import { useState } from "react";
 import { SessionStatusBadge } from "@/components/history/session-status-badge";
+import { SessionPDFExportButton } from "@/components/pdf/session-pdf-export-button";
 import type { ClinicalTimelineSession } from "@/lib/clinical-session-types";
 
 export function ClinicalTimelineItem({
@@ -46,6 +47,7 @@ export function ClinicalTimelineItem({
             >
               Editar sesion
             </Link>
+            <SessionPDFExportButton session={session} />
           </div>
         </div>
 
