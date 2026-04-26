@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { SessionStatusBadge } from "@/components/history/session-status-badge";
+import { PatientHistoryPDFExportButton } from "@/components/pdf/patient-history-pdf-export-button";
 import { SessionPDFExportButton } from "@/components/pdf/session-pdf-export-button";
 import { PatientDocumentsSection } from "@/components/patients/patient-documents-section";
 import { PageHeader } from "@/components/ui/page-header";
@@ -129,7 +130,7 @@ export function PatientProfileView({ patientId }: { patientId: string }) {
         eyebrow="Perfil de paciente"
         title={getPatientFullName(patient)}
         description="Vista clinica organizada para revision rapida y seguimiento."
-        action={<ProfileActions patientId={patient.id} />}
+        action={<ProfileActions patient={patient} sessions={sessions} />}
       />
 
       <SummaryPanel
@@ -424,7 +425,13 @@ function PatientProfileMessage({
   );
 }
 
-function ProfileActions({ patientId }: { patientId: string }) {
+function ProfileActions({
+  patient,
+  sessions,
+}: {
+  patient: PatientRow;
+  sessions: ClinicalTimelineSession[];
+}) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
       <Link
@@ -434,13 +441,14 @@ function ProfileActions({ patientId }: { patientId: string }) {
         Volver
       </Link>
       <Link
-        href={`/pacientes/${patientId}/editar`}
+        href={`/pacientes/${patient.id}/editar`}
         className="inline-flex h-11 w-full items-center justify-center rounded-2xl border border-rose-100 bg-white px-5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 sm:w-auto"
       >
         Editar paciente
       </Link>
+      <PatientHistoryPDFExportButton patient={patient} sessions={sessions} />
       <Link
-        href={`/sesiones/nueva?patientId=${patientId}`}
+        href={`/sesiones/nueva?patientId=${patient.id}`}
         className="inline-flex h-11 w-full items-center justify-center rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white sm:w-auto"
       >
         Nueva sesion
