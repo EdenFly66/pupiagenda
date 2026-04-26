@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 import { SessionStatusBadge } from "@/components/history/session-status-badge";
+import { PatientDocumentsSection } from "@/components/patients/patient-documents-section";
 import { PageHeader } from "@/components/ui/page-header";
 import { SectionCard } from "@/components/ui/section-card";
 import {
@@ -257,6 +258,8 @@ export function PatientProfileView({ patientId }: { patientId: string }) {
           />
         </div>
       </SectionBlock>
+
+      <PatientDocumentsSection patientId={patient.id} />
 
       <RecentSessionsSection
         patientId={patient.id}
