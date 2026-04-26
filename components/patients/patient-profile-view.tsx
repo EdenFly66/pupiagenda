@@ -22,6 +22,7 @@ import {
   patientSelectColumns,
   type PatientRow,
 } from "@/lib/patient-types";
+import { getAuthenticatedUser } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 
 const recentSessionsLimit = 5;
@@ -39,16 +40,19 @@ export function PatientProfileView({ patientId }: { patientId: string }) {
       setLoading(true);
       setError(null);
 
+      const user = await getAuthenticatedUser();
       const [patientResult, sessionsResult] = await Promise.all([
         supabase
           .from("patients")
           .select(patientSelectColumns)
           .eq("id", patientId)
+          .eq("user_id", user.id)
           .maybeSingle(),
         supabase
           .from("clinical_sessions")
           .select(clinicalSessionSelectColumns)
           .eq("patient_id", patientId)
+          .eq("user_id", user.id)
           .order("session_date", { ascending: false }),
       ]);
 

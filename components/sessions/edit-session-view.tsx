@@ -9,6 +9,7 @@ import {
   normalizeSessionStatus,
   type ClinicalSessionRow,
 } from "@/lib/clinical-session-types";
+import { getAuthenticatedUser } from "@/lib/auth";
 import type { SessionFormState } from "@/lib/session-form-types";
 import { supabase } from "@/lib/supabase";
 
@@ -24,10 +25,12 @@ export function EditSessionView({ sessionId }: { sessionId: string }) {
       setLoading(true);
       setError(null);
 
+      const user = await getAuthenticatedUser();
       const { data, error: queryError } = await supabase
         .from("clinical_sessions")
         .select(clinicalSessionSelectColumns)
         .eq("id", sessionId)
+        .eq("user_id", user.id)
         .maybeSingle();
 
       if (!active) {

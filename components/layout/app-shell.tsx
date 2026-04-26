@@ -4,6 +4,7 @@ import { CalendarHeart } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
+import { LogoutButton } from "@/components/auth/logout-button";
 import { navigationItems } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
@@ -46,8 +47,7 @@ function Sidebar({ pathname }: { pathname: string }) {
         ))}
       </nav>
       <div className="border-t border-border px-6 py-5">
-        <p className="text-sm font-medium">Consulta activa</p>
-        <p className="mt-1 text-sm text-muted">Base visual sin backend</p>
+        <LogoutButton />
       </div>
     </aside>
   );
@@ -66,11 +66,9 @@ function TopHeader() {
         <div className="flex items-center gap-3">
           <div className="hidden text-right sm:block">
             <p className="text-sm font-medium">Equipo clinico</p>
-            <p className="text-xs text-muted">Modo demo</p>
+            <p className="text-xs text-muted">Sesion activa</p>
           </div>
-          <div className="flex size-10 items-center justify-center rounded-2xl border border-border bg-background text-sm font-semibold">
-            EC
-          </div>
+          <LogoutButton compact />
         </div>
       </div>
     </header>

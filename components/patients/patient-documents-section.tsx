@@ -7,6 +7,7 @@ import {
   patientDocumentSelectColumns,
   type PatientDocumentRow,
 } from "@/lib/patient-document-types";
+import { getAuthenticatedUser } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 
 const bucketName = "patient-documents";
@@ -26,10 +27,12 @@ export function PatientDocumentsSection({ patientId }: { patientId: string }) {
       setLoading(true);
       setError(null);
 
+      const user = await getAuthenticatedUser();
       const { data, error: queryError } = await supabase
         .from("patient_documents")
         .select(patientDocumentSelectColumns)
         .eq("patient_id", patientId)
+        .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
       if (!active) {
@@ -69,6 +72,7 @@ export function PatientDocumentsSection({ patientId }: { patientId: string }) {
     setError(null);
     setSuccess(null);
 
+    await getAuthenticatedUser();
     const { data, error: signedUrlError } = await supabase.storage
       .from(bucketName)
       .createSignedUrl(document.file_path, 60);
@@ -96,6 +100,7 @@ export function PatientDocumentsSection({ patientId }: { patientId: string }) {
     setError(null);
     setSuccess(null);
 
+    const user = await getAuthenticatedUser();
     if (document.file_path) {
       const { error: storageError } = await supabase.storage
         .from(bucketName)
@@ -111,7 +116,8 @@ export function PatientDocumentsSection({ patientId }: { patientId: string }) {
     const { error: deleteError } = await supabase
       .from("patient_documents")
       .delete()
-      .eq("id", document.id);
+      .eq("id", document.id)
+      .eq("user_id", user.id);
 
     if (deleteError) {
       setError(deleteError.message);

@@ -8,6 +8,7 @@ import {
   patientSelectColumns,
   type PatientRow,
 } from "@/lib/patient-types";
+import { getAuthenticatedUser } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 
 export function HistoryPageView({
@@ -26,10 +27,12 @@ export function HistoryPageView({
         return;
       }
 
+      const user = await getAuthenticatedUser();
       const { data } = await supabase
         .from("patients")
         .select(patientSelectColumns)
         .eq("id", initialPatientId)
+        .eq("user_id", user.id)
         .maybeSingle();
 
       if (!active) {

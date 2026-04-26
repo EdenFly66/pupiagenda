@@ -8,6 +8,7 @@ import {
   patientSelectColumns,
   type PatientRow,
 } from "@/lib/patient-types";
+import { getAuthenticatedUser } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 
 export function PatientsView() {
@@ -23,9 +24,11 @@ export function PatientsView() {
       setLoading(true);
       setError(null);
 
+      const user = await getAuthenticatedUser();
       const { data, error: queryError } = await supabase
         .from("patients")
         .select(patientSelectColumns)
+        .eq("user_id", user.id)
         .order("created_at", { ascending: false });
 
       if (!active) {

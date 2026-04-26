@@ -9,6 +9,7 @@ import type {
   TextareaHTMLAttributes,
 } from "react";
 import { useState } from "react";
+import { getAuthenticatedUser } from "@/lib/auth";
 import type { PatientRow } from "@/lib/patient-types";
 import { supabase } from "@/lib/supabase";
 
@@ -177,11 +178,18 @@ export function PatientForm({
     setErrors({});
     setSuccessMessage(null);
 
+    const user = await getAuthenticatedUser();
     const payload = toPatientPayload(form);
     const { error } =
       mode === "edit" && patientId
-        ? await supabase.from("patients").update(payload).eq("id", patientId)
-        : await supabase.from("patients").insert(payload);
+        ? await supabase
+            .from("patients")
+            .update(payload)
+            .eq("id", patientId)
+            .eq("user_id", user.id)
+        : await supabase
+            .from("patients")
+            .insert({ ...payload, user_id: user.id });
 
     if (error) {
       setErrors({ form: error.message });

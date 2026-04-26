@@ -10,6 +10,7 @@ export type PatientDocumentType =
 export type PatientDocumentRow = {
   id: string;
   patient_id: string;
+  user_id: string | null;
   title: string | null;
   document_type: PatientDocumentType | string | null;
   file_name: string | null;
@@ -42,6 +43,7 @@ export const patientDocumentTypeLabels: Record<PatientDocumentType, string> = {
 export const patientDocumentSelectColumns = `
   id,
   patient_id,
+  user_id,
   title,
   document_type,
   file_name,

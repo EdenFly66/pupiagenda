@@ -16,6 +16,7 @@ import {
   clinicalSessionStatusLabels,
   type ClinicalSessionStatus,
 } from "@/lib/clinical-session-types";
+import { getAuthenticatedUser } from "@/lib/auth";
 import type { SessionFormState } from "@/lib/session-form-types";
 import { supabase } from "@/lib/supabase";
 
@@ -148,12 +149,19 @@ export function SessionForm({
 
     setSavingStatus(status);
 
+    const user = await getAuthenticatedUser();
     const payload = toSessionPayload(form, status);
 
     const { error } =
       mode === "edit" && sessionId
-        ? await supabase.from("clinical_sessions").update(payload).eq("id", sessionId)
-        : await supabase.from("clinical_sessions").insert(payload);
+        ? await supabase
+            .from("clinical_sessions")
+            .update(payload)
+            .eq("id", sessionId)
+            .eq("user_id", user.id)
+        : await supabase
+            .from("clinical_sessions")
+            .insert({ ...payload, user_id: user.id });
 
     console.log("Resultado guardado sesion", { status, payload, error });
 
@@ -182,11 +190,13 @@ export function SessionForm({
 
     setSavingChanges(true);
 
+    const user = await getAuthenticatedUser();
     const payload = toSessionPayload(form, currentStatus);
     const { error } = await supabase
       .from("clinical_sessions")
       .update(payload)
-      .eq("id", sessionId);
+      .eq("id", sessionId)
+      .eq("user_id", user.id);
 
     console.log("Resultado actualizacion sesion", {
       sessionId,

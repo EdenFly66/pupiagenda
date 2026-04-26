@@ -11,6 +11,7 @@ import {
   type ClinicalSessionRow,
   type ClinicalTimelineSession,
 } from "@/lib/clinical-session-types";
+import { getAuthenticatedUser } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 
 export function ClinicalTimeline({
@@ -34,9 +35,11 @@ export function ClinicalTimeline({
       setLoading(true);
       setError(null);
 
+      const user = await getAuthenticatedUser();
       let request = supabase
         .from("clinical_sessions")
         .select(clinicalSessionSelectColumns)
+        .eq("user_id", user.id)
         .order("session_date", { ascending: false });
 
       if (initialPatientId) {

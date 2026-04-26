@@ -8,6 +8,7 @@ import {
   type PatientDocumentRow,
   type PatientDocumentType,
 } from "@/lib/patient-document-types";
+import { getAuthenticatedUser } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 
 const bucketName = "patient-documents";
@@ -59,6 +60,7 @@ export function DocumentUploadForm({
     setError(null);
     setSuccess(null);
 
+    const user = await getAuthenticatedUser();
     const documentId = crypto.randomUUID();
     const fileName = file.name;
     const filePath = `${patientId}/${documentId}/${sanitizeFileName(fileName)}`;
@@ -79,6 +81,7 @@ export function DocumentUploadForm({
     const payload: PatientDocumentRow = {
       id: documentId,
       patient_id: patientId,
+      user_id: user.id,
       title: title.trim(),
       document_type: documentType,
       file_name: fileName,
