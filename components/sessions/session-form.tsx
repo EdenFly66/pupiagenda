@@ -16,6 +16,10 @@ import {
   clinicalSessionStatusLabels,
   type ClinicalSessionStatus,
 } from "@/lib/clinical-session-types";
+import {
+  generateClinicalEvolution,
+  generateSessionSummary,
+} from "@/lib/clinicalTemplates";
 import { getAuthenticatedUser } from "@/lib/auth";
 import type { SessionFormState } from "@/lib/session-form-types";
 import { supabase } from "@/lib/supabase";
@@ -136,6 +140,30 @@ export function SessionForm({
   function discardDraft() {
     clearDraft();
     setSuccessMessage("Borrador local descartado.");
+  }
+
+  function generateSummary() {
+    dismissRestorePrompt();
+    setForm((current) => ({
+      ...current,
+      sessionSummary: generateSessionSummary(toTemplateData(current, patientName)),
+    }));
+    setIsDirty(true);
+    setSaveError(null);
+    setSuccessMessage("Resumen generado. Puedes editarlo antes de guardar.");
+  }
+
+  function generateEvolution() {
+    dismissRestorePrompt();
+    setForm((current) => ({
+      ...current,
+      objectiveProgress: generateClinicalEvolution(
+        toTemplateData(current, patientName),
+      ),
+    }));
+    setIsDirty(true);
+    setSaveError(null);
+    setSuccessMessage("Evolucion generada. Puedes editarla antes de guardar.");
   }
 
   async function saveSession(status: ClinicalSessionStatus) {
@@ -331,6 +359,28 @@ export function SessionForm({
       </section>
 
       <section className="rounded-3xl border border-rose-100 bg-[#fffaf8] p-5 shadow-sm sm:p-6">
+        <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+          <p className="text-sm leading-6 text-muted">
+            Plantillas automaticas para acelerar la redaccion clinica.
+          </p>
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+            <button
+              type="button"
+              onClick={generateSummary}
+              className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 sm:w-auto"
+            >
+              Generar resumen
+            </button>
+            <button
+              type="button"
+              onClick={generateEvolution}
+              className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 sm:w-auto"
+            >
+              Generar evolucion
+            </button>
+          </div>
+        </div>
+
         <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
           <label className="block">
             <span className="text-sm font-semibold text-foreground">
@@ -407,6 +457,18 @@ function toSessionPayload(form: SessionFormState, status: ClinicalSessionStatus)
     session_summary: cleanOptional(form.sessionSummary),
     homework_or_tasks: cleanOptional(form.homeworkOrTasks),
     observations: cleanOptional(form.observations),
+  };
+}
+
+function toTemplateData(form: SessionFormState, patientName?: string) {
+  return {
+    patient_name: patientName,
+    session_date: form.sessionDate,
+    emotional_state: form.emotionalState,
+    session_content: form.sessionContent,
+    interventions: form.interventions,
+    objective_progress: form.objectiveProgress,
+    observations: form.observations,
   };
 }
 

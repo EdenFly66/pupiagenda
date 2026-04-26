@@ -24,7 +24,7 @@ export function PatientCard({ patient }: { patient: PatientRow }) {
           </p>
         </div>
         <span className="rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-800">
-          Supabase
+          Ficha
         </span>
       </div>
 

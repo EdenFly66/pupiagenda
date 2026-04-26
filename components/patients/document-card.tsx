@@ -39,12 +39,12 @@ export function DocumentCard({
           </dl>
         </div>
 
-        <div className="flex flex-col gap-2 sm:flex-row lg:shrink-0">
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap lg:shrink-0 lg:justify-end">
           <button
             type="button"
             onClick={() => onDownload(document)}
             disabled={downloading || !document.file_path}
-            className="inline-flex h-10 items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-70"
+            className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
           >
             {downloading ? "Preparando..." : "Descargar"}
           </button>
@@ -52,7 +52,7 @@ export function DocumentCard({
             type="button"
             onClick={() => onDelete(document)}
             disabled={deleting}
-            className="inline-flex h-10 items-center justify-center rounded-2xl border border-rose-200 bg-rose-50 px-4 text-sm font-semibold text-rose-900 shadow-sm transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-70"
+            className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-rose-200 bg-rose-50 px-4 text-sm font-semibold text-rose-900 shadow-sm transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
           >
             {deleting ? "Eliminando..." : "Eliminar"}
           </button>

@@ -32,18 +32,18 @@ export function ClinicalTimelineItem({
               {session.patientName}
             </p>
           </div>
-          <div className="flex flex-col gap-2 sm:flex-row">
+          <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:justify-end">
             {session.patientId ? (
               <Link
                 href={`/pacientes/${session.patientId}`}
-                className="inline-flex h-10 items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50"
+                className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 sm:w-auto"
               >
                 Ver paciente
               </Link>
             ) : null}
             <Link
               href={`/sesiones/${session.id}/editar`}
-              className="inline-flex h-10 items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white"
+              className="inline-flex h-10 w-full items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white sm:w-auto"
             >
               Editar sesion
             </Link>
@@ -83,7 +83,7 @@ export function ClinicalTimelineItem({
         <button
           type="button"
           onClick={() => setExpanded((current) => !current)}
-          className="mt-6 inline-flex h-10 items-center rounded-2xl bg-rose-50 px-4 text-sm font-semibold text-brand transition hover:bg-rose-100"
+          className="mt-6 inline-flex h-10 w-full items-center justify-center rounded-2xl bg-rose-50 px-4 text-sm font-semibold text-brand transition hover:bg-rose-100 sm:w-auto"
         >
           {expanded ? "Ocultar detalle" : "Ver detalle"}
         </button>

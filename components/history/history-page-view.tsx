@@ -63,7 +63,7 @@ export function HistoryPageView({
         description={
           isPatientHistory
             ? "Timeline filtrado por paciente, con busqueda dentro de sus sesiones."
-            : "Timeline con sesiones reales guardadas en Supabase."
+            : "Timeline con sesiones guardadas para revisar evolucion clinica."
         }
       />
 

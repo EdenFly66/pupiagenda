@@ -1,8 +1,19 @@
-import {
-  patientStatusFilters,
-  type PatientStatusFilter,
-} from "@/lib/mock-patients";
 import { cn } from "@/lib/utils";
+
+export type PatientStatusFilter =
+  | "all"
+  | "active"
+  | "evaluation"
+  | "paused"
+  | "discharged";
+
+const patientStatusFilters: Array<{ label: string; value: PatientStatusFilter }> = [
+  { label: "Todos", value: "all" },
+  { label: "Activos", value: "active" },
+  { label: "En evaluacion", value: "evaluation" },
+  { label: "Pausados", value: "paused" },
+  { label: "Alta", value: "discharged" },
+];
 
 type PatientFiltersProps = {
   value: PatientStatusFilter;

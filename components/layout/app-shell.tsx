@@ -20,7 +20,7 @@ export function AppShell({ children }: AppShellProps) {
       <Sidebar pathname={pathname} />
       <div className="min-h-screen lg:pl-72">
         <TopHeader />
-        <main className="px-4 pb-28 pt-5 sm:px-6 lg:px-8 lg:pb-10">
+        <main className="px-4 pb-32 pt-5 sm:px-6 lg:px-8 lg:pb-10">
           <div className="mx-auto w-full max-w-7xl">{children}</div>
         </main>
       </div>
@@ -78,7 +78,7 @@ function TopHeader() {
 function MobileNavigation({ pathname }: { pathname: string }) {
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface px-2 pb-3 pt-2 shadow-[0_-10px_30px_rgba(159,61,90,0.12)] lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface px-2 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-2 shadow-[0_-10px_30px_rgba(159,61,90,0.12)] lg:hidden"
       aria-label="Navegacion movil"
     >
       <div className="grid grid-cols-5 gap-1">
@@ -91,7 +91,7 @@ function MobileNavigation({ pathname }: { pathname: string }) {
               href={item.href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex min-h-14 flex-col items-center justify-center gap-1 rounded-2xl px-1 text-xs font-medium text-muted transition hover:bg-rose-50 hover:text-brand",
+                "flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-1 text-xs font-medium text-muted transition hover:bg-rose-50 hover:text-brand",
                 active &&
                   "bg-brand text-brand-foreground shadow-sm hover:bg-[#87304a] hover:text-white",
               )}
@@ -134,7 +134,7 @@ function NavigationLink({
       >
         <item.icon className="size-4" strokeWidth={2.2} aria-hidden="true" />
       </span>
-      {item.label}
+      <span className="truncate">{item.label}</span>
     </Link>
   );
 }

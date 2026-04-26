@@ -61,7 +61,7 @@ export function EditPatientView({ patientId }: { patientId: string }) {
         <PageHeader
           eyebrow="Pacientes"
           title="Cargando paciente"
-          description="Preparando ficha editable desde Supabase."
+          description="Preparando la ficha editable."
         />
         <div className="h-64 animate-pulse rounded-3xl border border-rose-100 bg-white/70" />
       </div>

@@ -162,7 +162,7 @@ export function DocumentUploadForm({
           onChange={updateFile}
           type="file"
           accept=".pdf,.docx,.png,.jpg,.jpeg,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png,image/jpeg"
-          className="mt-2 w-full rounded-2xl border border-dashed border-rose-200 bg-[#fffaf8] px-4 py-4 text-sm text-foreground file:mr-4 file:rounded-2xl file:border-0 file:bg-brand file:px-4 file:py-2 file:text-sm file:font-semibold file:text-brand-foreground hover:file:bg-[#87304a]"
+          className="mt-2 w-full rounded-2xl border border-dashed border-rose-200 bg-[#fffaf8] px-4 py-4 text-sm text-foreground file:mb-2 file:mr-4 file:rounded-2xl file:border-0 file:bg-brand file:px-4 file:py-2 file:text-sm file:font-semibold file:text-brand-foreground hover:file:bg-[#87304a] sm:file:mb-0"
         />
         <span className="mt-2 block text-xs leading-5 text-muted">
           PDF, DOCX, PNG o JPG. Maximo 10 MB.
@@ -185,7 +185,7 @@ export function DocumentUploadForm({
         <button
           type="submit"
           disabled={uploading}
-          className="inline-flex h-11 items-center justify-center rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white disabled:cursor-not-allowed disabled:opacity-70"
+          className="inline-flex h-11 w-full items-center justify-center rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
         >
           {uploading ? "Subiendo..." : "Subir documento"}
         </button>

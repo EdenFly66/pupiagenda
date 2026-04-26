@@ -13,7 +13,7 @@ export default function PatientsPage() {
         action={
           <Link
             href="/pacientes/nuevo"
-            className="inline-flex h-11 items-center gap-2 rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white focus:outline-none focus:ring-4 focus:ring-rose-100"
+            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white focus:outline-none focus:ring-4 focus:ring-rose-100 sm:w-auto"
           >
             <UserPlus className="size-4" aria-hidden="true" />
             Nuevo paciente

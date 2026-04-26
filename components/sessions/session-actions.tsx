@@ -29,7 +29,7 @@ export function SessionActions({
           {autoSaveLabel}
           {isDirty ? " / cambios sin guardar" : ""}
         </p>
-        <div className="grid gap-3 sm:grid-cols-2 xl:flex xl:flex-row">
+        <div className="grid w-full gap-3 sm:grid-cols-2 xl:flex xl:w-auto xl:flex-row">
           {mode === "edit" && onSaveChanges ? (
             <ActionButton
               disabled={isSaving}
@@ -107,7 +107,7 @@ function ActionButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`inline-flex h-11 items-center justify-center rounded-2xl px-5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-70 ${styles[variant]}`}
+      className={`inline-flex h-11 w-full items-center justify-center rounded-2xl px-5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-70 xl:w-auto ${styles[variant]}`}
     >
       {loading ? "Guardando..." : children}
     </button>

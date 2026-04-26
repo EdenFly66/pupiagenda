@@ -60,7 +60,7 @@ export function EditSessionView({ sessionId }: { sessionId: string }) {
         <PageHeader
           eyebrow="Sesiones"
           title="Cargando sesion"
-          description="Consultando registro clinico desde Supabase."
+          description="Preparando el registro clinico."
         />
         <div className="h-64 animate-pulse rounded-3xl border border-rose-100 bg-white/70" />
       </div>

@@ -47,15 +47,15 @@ export function SessionPDFExportButton({
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex w-full flex-col gap-2 sm:w-auto">
         <button
           type="button"
           onClick={handleExport}
           disabled={exporting}
           className={
             variant === "primary"
-              ? "inline-flex h-10 items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white disabled:cursor-not-allowed disabled:opacity-70"
-              : "inline-flex h-10 items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-70"
+              ? "inline-flex h-10 w-full items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
+              : "inline-flex h-10 w-full items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
           }
         >
           {exporting ? "Generando..." : "Exportar PDF"}

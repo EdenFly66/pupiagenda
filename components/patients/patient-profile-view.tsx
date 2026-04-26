@@ -94,7 +94,7 @@ export function PatientProfileView({ patientId }: { patientId: string }) {
         <PageHeader
           eyebrow="Perfil de paciente"
           title="Cargando paciente"
-          description="Consultando informacion desde Supabase."
+          description="Preparando la ficha clinica."
         />
         <div className="h-64 animate-pulse rounded-3xl border border-rose-100 bg-white/70" />
       </div>
@@ -371,16 +371,16 @@ function RecentSessionsSection({
           Ultimas {Math.min(sessionsCount, recentSessionsLimit)} sesiones para
           revisar continuidad clinica sin salir del perfil.
         </p>
-        <div className="flex flex-col gap-2 sm:flex-row">
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
           <Link
             href={`/sesiones/nueva?patientId=${patientId}`}
-            className="inline-flex h-10 items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white"
+            className="inline-flex h-10 w-full items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white sm:w-auto"
           >
             Nueva sesion
           </Link>
           <Link
             href={`/historial?patientId=${patientId}`}
-            className="inline-flex h-10 items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50"
+            className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 sm:w-auto"
           >
             Ver historial completo
           </Link>
@@ -426,22 +426,22 @@ function PatientProfileMessage({
 
 function ProfileActions({ patientId }: { patientId: string }) {
   return (
-    <div className="flex flex-col gap-3 sm:flex-row">
+    <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
       <Link
         href="/pacientes"
-        className="inline-flex h-11 items-center justify-center rounded-2xl border border-rose-100 bg-white px-5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50"
+        className="inline-flex h-11 w-full items-center justify-center rounded-2xl border border-rose-100 bg-white px-5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 sm:w-auto"
       >
         Volver
       </Link>
       <Link
         href={`/pacientes/${patientId}/editar`}
-        className="inline-flex h-11 items-center justify-center rounded-2xl border border-rose-100 bg-white px-5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50"
+        className="inline-flex h-11 w-full items-center justify-center rounded-2xl border border-rose-100 bg-white px-5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 sm:w-auto"
       >
         Editar paciente
       </Link>
       <Link
         href={`/sesiones/nueva?patientId=${patientId}`}
-        className="inline-flex h-11 items-center justify-center rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white"
+        className="inline-flex h-11 w-full items-center justify-center rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white sm:w-auto"
       >
         Nueva sesion
       </Link>
@@ -515,17 +515,17 @@ function PatientSessionItem({
             <SessionStatusBadge status={session.status} />
           </div>
         </div>
-        <div className="flex flex-col gap-2 sm:flex-row">
+        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
           <button
             type="button"
             onClick={() => setExpanded((current) => !current)}
-            className="inline-flex h-10 items-center justify-center rounded-2xl bg-rose-50 px-4 text-sm font-semibold text-brand transition hover:bg-rose-100"
+            className="inline-flex h-10 w-full items-center justify-center rounded-2xl bg-rose-50 px-4 text-sm font-semibold text-brand transition hover:bg-rose-100 sm:w-auto"
           >
             {expanded ? "Ocultar detalle" : "Ver detalle"}
           </button>
           <Link
             href={`/sesiones/${session.id}/editar`}
-            className="inline-flex h-10 items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground transition hover:bg-[#87304a] hover:text-white"
+            className="inline-flex h-10 w-full items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground transition hover:bg-[#87304a] hover:text-white sm:w-auto"
           >
             Editar sesion
           </Link>

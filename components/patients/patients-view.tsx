@@ -104,7 +104,7 @@ export function PatientsView() {
           <p className="mt-2 text-sm text-muted">
             {query
               ? "Prueba con otro nombre, correo o telefono."
-              : "Cuando existan registros en Supabase apareceran aqui."}
+              : "Crea una ficha para comenzar el seguimiento."}
           </p>
         </div>
       )}
@@ -143,8 +143,8 @@ function PatientsError({ message }: { message: string }) {
       <p className="font-semibold text-rose-900">No se pudieron cargar pacientes.</p>
       <p className="mt-2 text-sm leading-6 text-muted">{message}</p>
       <p className="mt-4 text-sm leading-6 text-muted">
-        Si RLS esta activo y aun no hay autenticacion ni policies, Supabase
-        puede bloquear esta lectura con la anon key.
+        Revisa tu conexion e intenta nuevamente. Si el problema persiste,
+        vuelve a iniciar sesion.
       </p>
     </div>
   );

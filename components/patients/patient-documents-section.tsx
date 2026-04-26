@@ -135,7 +135,7 @@ export function PatientDocumentsSection({ patientId }: { patientId: string }) {
       <div className="flex flex-col gap-2">
         <h3 className="text-base font-semibold text-foreground">Documentos</h3>
         <p className="text-sm leading-6 text-muted">
-          Adjuntos privados de la ficha. Los enlaces de descarga son temporales.
+          Adjuntos privados de la ficha clinica.
         </p>
       </div>
 

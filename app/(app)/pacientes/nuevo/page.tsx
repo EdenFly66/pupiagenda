@@ -7,7 +7,7 @@ export default function NewPatientPage() {
       <PageHeader
         eyebrow="Pacientes"
         title="Nuevo paciente"
-        description="Crea un registro basico en Supabase. La ficha clinica se completara en siguientes etapas."
+        description="Crea una ficha inicial y completa la informacion clinica relevante."
       />
 
       <PatientForm />
