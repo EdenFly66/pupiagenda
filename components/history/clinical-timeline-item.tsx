@@ -23,12 +23,12 @@ export function ClinicalTimelineItem({
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <h3 className="text-lg font-semibold text-foreground">
-                {session.patientName}
+                {formattedDate}
               </h3>
               <SessionStatusBadge status={session.status} />
             </div>
             <p className="mt-2 text-sm font-medium text-brand">
-              {formattedDate}
+              {session.patientName}
             </p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row">
@@ -49,9 +49,18 @@ export function ClinicalTimelineItem({
           </div>
         </div>
 
-        <div className="mt-5 space-y-3">
-          <p className="text-base font-semibold">{session.motivo}</p>
-          <p className="text-sm leading-6 text-muted">{session.summary}</p>
+        <div className="mt-5 grid gap-3 lg:grid-cols-[0.9fr_1.1fr]">
+          <InfoBlock label="Estado emocional" value={session.emotionalState} />
+          <InfoBlock label="Motivo / foco" value={session.motivo} />
+        </div>
+
+        <div className="mt-4 rounded-2xl bg-[#fffaf8] p-4">
+          <p className="text-xs font-semibold uppercase tracking-normal text-muted">
+            {session.hasSessionSummary ? "Resumen de sesion" : "Contenido de sesion"}
+          </p>
+          <p className="mt-2 text-sm leading-6 text-foreground">
+            {session.summary}
+          </p>
         </div>
 
         {expanded ? (
@@ -78,6 +87,17 @@ export function ClinicalTimelineItem({
         </button>
       </div>
     </article>
+  );
+}
+
+function InfoBlock({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl bg-rose-50/60 p-4">
+      <p className="text-xs font-semibold uppercase tracking-normal text-muted">
+        {label}
+      </p>
+      <p className="mt-2 text-sm font-semibold text-foreground">{value}</p>
+    </div>
   );
 }
 

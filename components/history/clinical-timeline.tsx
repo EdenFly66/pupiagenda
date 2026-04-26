@@ -3,9 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { ClinicalTimelineItem } from "@/components/history/clinical-timeline-item";
 import { HistoryFilters } from "@/components/history/history-filters";
+import { HistorySummary } from "@/components/history/history-summary";
 import {
   mapClinicalSessionRow,
   clinicalSessionSelectColumns,
+  type ClinicalSessionStatus,
   type ClinicalSessionRow,
   type ClinicalTimelineSession,
 } from "@/lib/clinical-session-types";
@@ -17,8 +19,11 @@ export function ClinicalTimeline({
   initialPatientId?: string;
 }) {
   const [sessions, setSessions] = useState<ClinicalTimelineSession[]>([]);
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
   const [query, setQuery] = useState("");
   const [patientId, setPatientId] = useState(initialPatientId ?? "all");
+  const [status, setStatus] = useState<ClinicalSessionStatus | "all">("all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -80,6 +85,11 @@ export function ClinicalTimeline({
 
     return sessions.filter((session) => {
       const matchesPatient = patientId === "all" || session.patientId === patientId;
+      const matchesStatus = status === "all" || session.status === status;
+      const matchesDateFrom =
+        !dateFrom || Boolean(session.sessionDate && session.sessionDate >= dateFrom);
+      const matchesDateTo =
+        !dateTo || Boolean(session.sessionDate && session.sessionDate <= dateTo);
       const searchable = normalize(
         [
           session.patientName,
@@ -99,19 +109,33 @@ export function ClinicalTimeline({
         ].join(" "),
       );
 
-      return matchesPatient && searchable.includes(normalizedQuery);
+      return (
+        matchesPatient &&
+        matchesStatus &&
+        matchesDateFrom &&
+        matchesDateTo &&
+        searchable.includes(normalizedQuery)
+      );
     });
-  }, [patientId, query, sessions]);
+  }, [dateFrom, dateTo, patientId, query, sessions, status]);
 
   return (
     <div className="space-y-6">
+      <HistorySummary sessions={sessions} />
+
       <HistoryFilters
         constrainedPatientId={initialPatientId}
+        dateFrom={dateFrom}
+        dateTo={dateTo}
         query={query}
         patientId={patientId}
         patients={patientOptions}
+        status={status}
+        onDateFromChange={setDateFrom}
+        onDateToChange={setDateTo}
         onQueryChange={setQuery}
         onPatientChange={setPatientId}
+        onStatusChange={setStatus}
       />
 
       {loading ? (
@@ -125,19 +149,37 @@ export function ClinicalTimeline({
           ))}
         </div>
       ) : (
-        <div className="rounded-3xl border border-dashed border-rose-200 bg-white/80 p-8 text-center">
-          <p className="font-semibold">
-            {sessions.length === 0
-              ? "No hay sesiones registradas."
-              : "No hay sesiones para esos filtros."}
-          </p>
-          <p className="mt-2 text-sm text-muted">
-            {sessions.length === 0
-              ? "Cuando guardes sesiones clinicas apareceran aqui."
-              : "Ajusta el paciente o texto de busqueda."}
-          </p>
-        </div>
+        <TimelineEmpty
+          filteredByPatient={Boolean(initialPatientId)}
+          hasSessions={sessions.length > 0}
+        />
       )}
+    </div>
+  );
+}
+
+function TimelineEmpty({
+  filteredByPatient,
+  hasSessions,
+}: {
+  filteredByPatient: boolean;
+  hasSessions: boolean;
+}) {
+  const title = hasSessions
+    ? "No hay sesiones para esos filtros."
+    : filteredByPatient
+      ? "Esta paciente no tiene sesiones registradas."
+      : "No hay sesiones registradas.";
+  const description = hasSessions
+    ? "Ajusta paciente, estado, fechas o texto de busqueda."
+    : filteredByPatient
+      ? "Cuando guardes una sesion para esta paciente aparecera aqui."
+      : "Cuando guardes sesiones clinicas apareceran aqui.";
+
+  return (
+    <div className="rounded-3xl border border-dashed border-rose-200 bg-white/80 p-8 text-center">
+      <p className="font-semibold">{title}</p>
+      <p className="mt-2 text-sm text-muted">{description}</p>
     </div>
   );
 }

@@ -39,6 +39,7 @@ export type ClinicalTimelineSession = {
   status: ClinicalSessionStatus;
   motivo: string;
   summary: string;
+  hasSessionSummary: boolean;
   emotionalState: string;
   axisEvaluation: string;
   sessionContent: string;
@@ -50,6 +51,13 @@ export type ClinicalTimelineSession = {
   homeworkOrTasks: string;
   observations: string;
 };
+
+export const clinicalSessionStatuses: ClinicalSessionStatus[] = [
+  "draft",
+  "completed",
+  "cancelled",
+  "no_show",
+];
 
 export const clinicalSessionStatusLabels: Record<ClinicalSessionStatus, string> = {
   draft: "Borrador",
@@ -95,8 +103,9 @@ export function mapClinicalSessionRow(
     : session.patients;
   const sessionContent =
     clean(session.session_content) || clean(session.desarrollo) || "Sin contenido registrado.";
+  const sessionSummary = clean(session.session_summary);
   const summary =
-    clean(session.session_summary) ||
+    sessionSummary ||
     truncateText(sessionContent, 170);
 
   return {
@@ -107,6 +116,7 @@ export function mapClinicalSessionRow(
     status: normalizeSessionStatus(session.status),
     motivo: clean(session.motivo) || clean(session.axis_evaluation) || "Sin motivo registrado",
     summary,
+    hasSessionSummary: Boolean(sessionSummary),
     emotionalState:
       clean(session.emotional_state) || clean(session.estado_emocional) || "Sin dato",
     axisEvaluation: clean(session.axis_evaluation) || "Sin evaluacion registrada.",
