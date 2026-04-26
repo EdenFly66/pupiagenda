@@ -11,10 +11,14 @@ import {
 } from "@/lib/clinical-session-types";
 import { supabase } from "@/lib/supabase";
 
-export function ClinicalTimeline() {
+export function ClinicalTimeline({
+  initialPatientId,
+}: {
+  initialPatientId?: string;
+}) {
   const [sessions, setSessions] = useState<ClinicalTimelineSession[]>([]);
   const [query, setQuery] = useState("");
-  const [patientId, setPatientId] = useState("all");
+  const [patientId, setPatientId] = useState(initialPatientId ?? "all");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,10 +29,16 @@ export function ClinicalTimeline() {
       setLoading(true);
       setError(null);
 
-      const { data, error: queryError } = await supabase
+      let request = supabase
         .from("clinical_sessions")
         .select(clinicalSessionSelectColumns)
         .order("session_date", { ascending: false });
+
+      if (initialPatientId) {
+        request = request.eq("patient_id", initialPatientId);
+      }
+
+      const { data, error: queryError } = await request;
 
       if (!active) {
         return;
@@ -49,7 +59,7 @@ export function ClinicalTimeline() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [initialPatientId]);
 
   const patientOptions = useMemo(() => {
     const patients = new Map<string, string>();
@@ -96,6 +106,7 @@ export function ClinicalTimeline() {
   return (
     <div className="space-y-6">
       <HistoryFilters
+        constrainedPatientId={initialPatientId}
         query={query}
         patientId={patientId}
         patients={patientOptions}

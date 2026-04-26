@@ -16,7 +16,7 @@ export default function PatientsPage() {
             className="inline-flex h-11 items-center gap-2 rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white focus:outline-none focus:ring-4 focus:ring-rose-100"
           >
             <UserPlus className="size-4" aria-hidden="true" />
-            Nueva paciente
+            Nuevo paciente
           </Link>
         }
       />

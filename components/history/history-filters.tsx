@@ -1,9 +1,12 @@
+import Link from "next/link";
+
 type PatientFilterOption = {
   id: string;
   name: string;
 };
 
 type HistoryFiltersProps = {
+  constrainedPatientId?: string;
   query: string;
   patientId: string;
   patients: PatientFilterOption[];
@@ -12,15 +15,18 @@ type HistoryFiltersProps = {
 };
 
 export function HistoryFilters({
+  constrainedPatientId,
   query,
   patientId,
   patients,
   onQueryChange,
   onPatientChange,
 }: HistoryFiltersProps) {
+  const isConstrained = Boolean(constrainedPatientId);
+
   return (
     <section className="rounded-3xl border border-rose-100 bg-[#fffaf8] p-4 shadow-sm sm:p-5">
-      <div className="grid gap-4 lg:grid-cols-[1fr_240px]">
+      <div className="grid gap-4 lg:grid-cols-[1fr_240px_auto]">
         <label className="block">
           <span className="sr-only">Buscar en historial</span>
           <input
@@ -47,6 +53,15 @@ export function HistoryFilters({
             ))}
           </select>
         </label>
+
+        {isConstrained ? (
+          <Link
+            href="/historial"
+            className="inline-flex h-11 items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50"
+          >
+            Ver historial general
+          </Link>
+        ) : null}
       </div>
     </section>
   );

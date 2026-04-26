@@ -1,16 +1,11 @@
-import { ClinicalTimeline } from "@/components/history/clinical-timeline";
-import { PageHeader } from "@/components/ui/page-header";
+import { HistoryPageView } from "@/components/history/history-page-view";
 
-export default function HistoryPage() {
-  return (
-    <div className="space-y-8 bg-[radial-gradient(circle_at_top_left,#fff0f3_0,transparent_30rem)]">
-      <PageHeader
-        eyebrow="Registro"
-        title="Historial clinico"
-        description="Timeline con sesiones reales guardadas en Supabase."
-      />
+export default async function HistoryPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ patientId?: string }>;
+}) {
+  const { patientId } = await searchParams;
 
-      <ClinicalTimeline />
-    </div>
-  );
+  return <HistoryPageView initialPatientId={patientId} />;
 }
