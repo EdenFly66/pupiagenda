@@ -32,7 +32,7 @@ export default function SettingsPage() {
             <p className="mt-2 text-sm leading-6 text-muted">{item.description}</p>
             <button
               type="button"
-              className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-2xl border border-border px-4 text-sm font-semibold transition hover:bg-background sm:w-auto"
+              className="mt-5 inline-flex h-10 w-full items-center justify-center rounded-2xl border border-leaf bg-white px-4 text-sm font-semibold text-leaf-foreground transition hover:bg-leaf-soft hover:text-leaf-strong sm:w-auto"
             >
               Revisar
             </button>

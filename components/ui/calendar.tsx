@@ -21,20 +21,20 @@ function Calendar({ className, classNames, ...props }: CalendarProps) {
         caption_label: "text-sm font-semibold capitalize",
         nav: "absolute inset-x-3 top-3 flex items-center justify-between",
         button_previous:
-          "flex size-8 items-center justify-center rounded-full border border-rose-100 bg-white text-muted transition hover:bg-rose-50 hover:text-foreground",
+          "flex size-8 items-center justify-center rounded-full border border-leaf bg-white text-leaf-foreground transition hover:bg-leaf-soft hover:text-leaf-strong",
         button_next:
-          "flex size-8 items-center justify-center rounded-full border border-rose-100 bg-white text-muted transition hover:bg-rose-50 hover:text-foreground",
+          "flex size-8 items-center justify-center rounded-full border border-leaf bg-white text-leaf-foreground transition hover:bg-leaf-soft hover:text-leaf-strong",
         weekdays: "grid grid-cols-7 gap-1 text-muted",
         weekday: "flex h-8 items-center justify-center text-xs font-semibold",
         week: "grid grid-cols-7 gap-1",
         day: "relative flex size-9 items-center justify-center rounded-full text-sm",
         day_button:
-          "flex size-9 items-center justify-center rounded-full transition hover:bg-rose-50 focus:outline-none focus:ring-2 focus:ring-rose-100",
+          "flex size-9 items-center justify-center rounded-full transition hover:bg-leaf-soft focus:outline-none focus:ring-2 focus:ring-leaf",
         selected:
           "rounded-full bg-brand text-brand-foreground hover:bg-brand hover:text-brand-foreground",
-        today: "font-bold text-brand",
-        outside: "text-stone-300",
-        disabled: "text-stone-300 opacity-50",
+        today: "font-bold text-brand-active",
+        outside: "text-stone-500",
+        disabled: "text-stone-500 opacity-70",
         ...classNames,
       }}
       {...props}

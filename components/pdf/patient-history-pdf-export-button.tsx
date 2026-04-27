@@ -53,7 +53,7 @@ export function PatientHistoryPDFExportButton({
           type="button"
           onClick={handleExport}
           disabled={exporting}
-          className="inline-flex h-11 w-full items-center justify-center rounded-2xl border border-rose-100 bg-white px-5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
+          className="inline-flex h-11 w-full items-center justify-center rounded-2xl border border-leaf bg-white px-5 text-sm font-semibold text-leaf-foreground shadow-sm transition hover:bg-leaf-soft hover:text-leaf-strong disabled:cursor-not-allowed disabled:bg-background disabled:text-muted sm:w-auto"
         >
           {exporting ? "Generando PDF..." : "Exportar historial PDF"}
         </button>

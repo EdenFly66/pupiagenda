@@ -1,10 +1,10 @@
 "use client";
 
-import { CalendarHeart } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { LogoutButton } from "@/components/auth/logout-button";
+import { StrawberryLogo } from "@/components/brand/StrawberryLogo";
 import { navigationItems } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
@@ -33,12 +33,10 @@ function Sidebar({ pathname }: { pathname: string }) {
   return (
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 border-r border-border bg-surface lg:flex lg:flex-col">
       <div className="flex h-20 items-center gap-3 border-b border-border px-6">
-        <div className="flex size-11 items-center justify-center rounded-2xl bg-rose-100 text-brand">
-          <CalendarHeart className="size-5" aria-hidden="true" />
-        </div>
+        <StrawberryLogo className="shrink-0" size="md" />
         <div>
           <p className="text-base font-semibold">PupiAgenda</p>
-          <p className="text-sm text-muted">Gestion clinica</p>
+          <p className="text-sm text-muted">Agenda clinica</p>
         </div>
       </div>
       <nav className="flex flex-1 flex-col gap-1 px-4 py-5" aria-label="Principal">
@@ -57,11 +55,14 @@ function TopHeader() {
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-surface/95 px-4 backdrop-blur sm:px-6 lg:px-8">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4">
-        <div className="min-w-0">
-          <p className="text-sm font-medium text-muted">PupiAgenda</p>
-          <h1 className="truncate text-lg font-semibold text-foreground">
-            Panel de trabajo
-          </h1>
+        <div className="flex min-w-0 items-center gap-3">
+          <StrawberryLogo className="shrink-0" size="sm" />
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-muted">PupiAgenda</p>
+            <h1 className="truncate text-lg font-semibold text-foreground">
+              Panel de trabajo
+            </h1>
+          </div>
         </div>
         <div className="flex items-center gap-3">
           <div className="hidden text-right sm:block">
@@ -91,9 +92,9 @@ function MobileNavigation({ pathname }: { pathname: string }) {
               href={item.href}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-1 text-xs font-medium text-muted transition hover:bg-rose-50 hover:text-brand",
+                "flex min-h-14 min-w-0 flex-col items-center justify-center gap-1 rounded-2xl px-1 text-xs font-medium text-muted transition hover:bg-leaf-soft hover:text-leaf-strong",
                 active &&
-                  "bg-brand text-brand-foreground shadow-sm hover:bg-[#87304a] hover:text-white",
+                  "bg-brand text-brand-foreground shadow-sm hover:bg-brand-hover hover:text-brand-foreground active:bg-brand-active",
               )}
             >
               <item.icon className="size-5" strokeWidth={2.2} aria-hidden="true" />
@@ -120,16 +121,15 @@ function NavigationLink({
       href={item.href}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-rose-50 hover:text-brand",
+        "group flex items-center gap-3 rounded-2xl px-3 py-2.5 text-sm font-medium text-muted transition hover:bg-leaf-soft hover:text-leaf-strong",
         active &&
-          "bg-brand text-brand-foreground shadow-sm hover:bg-[#87304a] hover:text-white",
+          "bg-brand text-brand-foreground shadow-sm hover:bg-brand-hover hover:text-brand-foreground active:bg-brand-active",
       )}
     >
       <span
         className={cn(
-          "flex size-8 items-center justify-center rounded-xl bg-rose-50 text-muted transition group-hover:bg-rose-100 group-hover:text-brand",
-          active &&
-            "bg-white/15 text-brand-foreground group-hover:bg-white/20 group-hover:text-white",
+          "flex size-8 items-center justify-center rounded-xl bg-rose-soft text-muted transition group-hover:bg-white group-hover:text-leaf-strong",
+          active && "bg-transparent text-brand-foreground group-hover:text-brand-foreground",
         )}
       >
         <item.icon className="size-4" strokeWidth={2.2} aria-hidden="true" />

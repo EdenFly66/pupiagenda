@@ -25,10 +25,10 @@ export function SessionDatePicker({ value, onChange }: SessionDatePickerProps) {
         <PopoverTrigger asChild>
           <button
             type="button"
-            className="mt-2 flex h-12 w-full items-center justify-between rounded-2xl border border-rose-100 bg-white/95 px-4 text-left text-sm font-medium text-foreground shadow-sm outline-none transition hover:bg-rose-50/70 focus:border-brand focus:ring-4 focus:ring-rose-100"
+            className="mt-2 flex h-12 w-full items-center justify-between rounded-2xl border border-rose-100 bg-white/95 px-4 text-left text-sm font-medium text-foreground shadow-sm outline-none transition hover:bg-leaf-soft focus:border-brand focus:ring-4 focus:ring-rose-soft"
           >
             <span>{format(value, "d 'de' MMMM yyyy", { locale: es })}</span>
-            <span className="rounded-full bg-rose-50 px-2.5 py-1 text-xs font-semibold text-brand">
+            <span className="rounded-full bg-leaf-soft px-2.5 py-1 text-xs font-semibold text-leaf-foreground">
               Cal
             </span>
           </button>

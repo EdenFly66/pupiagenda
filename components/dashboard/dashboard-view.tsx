@@ -219,7 +219,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
         action={
           <Link
             href="/sesiones/nueva"
-            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white sm:w-auto"
+            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-brand-hover hover:text-brand-foreground active:bg-brand-active sm:w-auto"
           >
             <CalendarPlus className="size-4" aria-hidden="true" />
             Nueva sesion
@@ -327,7 +327,7 @@ function RecentActivity({
 
 function PendingDrafts({ drafts }: { drafts: ClinicalTimelineSession[] }) {
   return (
-    <SectionCard className="rounded-3xl border-rose-100 bg-[#fffaf8]">
+    <SectionCard className="rounded-3xl border-rose-100 bg-background">
       <SectionHeading
         title="Borradores pendientes"
         description="Sesiones guardadas como borrador para completar o finalizar."
@@ -356,7 +356,7 @@ function PendingDrafts({ drafts }: { drafts: ClinicalTimelineSession[] }) {
               </p>
               <Link
                 href={`/sesiones/${draft.id}/editar`}
-                className="mt-4 inline-flex h-10 w-full items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground transition hover:bg-[#87304a] hover:text-white sm:w-auto"
+                className="mt-4 inline-flex h-10 w-full items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover hover:text-brand-foreground active:bg-brand-active sm:w-auto"
               >
                 Editar sesion
               </Link>
@@ -415,17 +415,17 @@ function QuickAccess() {
             <Link
               key={item.href}
               href={item.href}
-              className="group rounded-3xl border border-rose-100 bg-[#fffaf8] p-4 transition hover:border-brand hover:bg-brand"
+              className="group rounded-3xl border border-rose-100 bg-background p-4 transition hover:border-leaf hover:bg-leaf-soft"
             >
               <div className="flex items-start gap-3">
-                <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-2xl bg-white text-brand shadow-sm transition group-hover:bg-white/15 group-hover:text-white">
+                <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-2xl bg-white text-brand-active shadow-sm transition group-hover:bg-white group-hover:text-leaf-strong">
                   <Icon className="size-5" aria-hidden="true" />
                 </span>
                 <span className="min-w-0">
-                  <span className="block text-sm font-semibold text-foreground transition group-hover:text-white">
+                  <span className="block text-sm font-semibold text-foreground transition group-hover:text-leaf-strong">
                     {item.title}
                   </span>
-                  <span className="mt-1 block text-sm leading-6 text-muted transition group-hover:text-white/90">
+                  <span className="mt-1 block text-sm leading-6 text-muted transition group-hover:text-leaf-foreground">
                     {item.description}
                   </span>
                 </span>
@@ -457,7 +457,7 @@ function SessionActivityItem({ session }: { session: ClinicalTimelineSession }) 
   return (
     <Link
       href={`/sesiones/${session.id}/editar`}
-      className="block rounded-3xl border border-rose-100 bg-[#fffaf8] p-4 transition hover:border-rose-200 hover:bg-white"
+      className="block rounded-3xl border border-rose-100 bg-background p-4 transition hover:border-leaf hover:bg-leaf-soft"
     >
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
@@ -481,10 +481,10 @@ function PatientActivityItem({ patient }: { patient: PatientRow }) {
   return (
     <Link
       href={`/pacientes/${patient.id}`}
-      className="block rounded-3xl border border-rose-100 bg-[#fffaf8] p-4 transition hover:border-rose-200 hover:bg-white"
+      className="block rounded-3xl border border-rose-100 bg-background p-4 transition hover:border-leaf hover:bg-leaf-soft"
     >
       <div className="flex items-start gap-3">
-        <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-2xl bg-white text-brand shadow-sm">
+        <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-2xl bg-white text-brand-active shadow-sm">
           <ClipboardList className="size-5" aria-hidden="true" />
         </span>
         <span className="min-w-0">
@@ -524,7 +524,7 @@ function EmptyState({
 }) {
   return (
     <div className="mt-5 rounded-3xl border border-dashed border-rose-200 bg-white/70 p-6 text-center">
-      <LayoutDashboard className="mx-auto size-8 text-brand" aria-hidden="true" />
+      <LayoutDashboard className="mx-auto size-8 text-brand-active" aria-hidden="true" />
       <p className="mt-3 font-semibold text-foreground">{title}</p>
       <p className="mt-2 text-sm leading-6 text-muted">{description}</p>
     </div>

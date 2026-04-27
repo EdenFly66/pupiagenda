@@ -23,7 +23,7 @@ export function PatientCard({ patient }: { patient: PatientRow }) {
             {displayValue(patient.pronouns)} / {displayValue(patient.status)}
           </p>
         </div>
-        <span className="rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-800">
+        <span className="rounded-full border border-rose-300 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-900">
           Ficha
         </span>
       </div>

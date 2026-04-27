@@ -10,11 +10,11 @@ const patientStatusLabels: Record<string, string> = {
 };
 
 const statusStyles: Record<string, string> = {
-  active: "border-rose-200 bg-rose-50 text-rose-800",
-  evaluation: "border-violet-200 bg-violet-50 text-violet-800",
-  inactive: "border-stone-200 bg-stone-100 text-stone-700",
-  paused: "border-stone-200 bg-stone-100 text-stone-700",
-  discharged: "border-emerald-200 bg-emerald-50 text-emerald-800",
+  active: "border-leaf bg-leaf-soft text-leaf-strong",
+  evaluation: "border-brand-active bg-rose-soft text-brand-active",
+  inactive: "border-stone-300 bg-stone-100 text-stone-800",
+  paused: "border-stone-300 bg-stone-100 text-stone-800",
+  discharged: "border-leaf bg-leaf-soft text-leaf-strong",
 };
 
 export function PatientStatusBadge({

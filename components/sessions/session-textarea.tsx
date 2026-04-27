@@ -33,7 +33,7 @@ export function SessionTextarea({
         rows={rows}
         placeholder={placeholder}
         className={cn(
-          "mt-3 w-full resize-y rounded-3xl border border-rose-100 bg-white/95 px-5 py-4 text-base leading-7 text-foreground shadow-sm outline-none transition placeholder:text-stone-400 focus:border-brand focus:ring-4 focus:ring-rose-100",
+          "mt-3 w-full resize-y rounded-3xl border border-rose-100 bg-white/95 px-5 py-4 text-base leading-7 text-foreground shadow-sm outline-none transition placeholder:text-placeholder focus:border-brand focus:ring-4 focus:ring-rose-soft",
           className,
         )}
       />

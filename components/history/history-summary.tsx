@@ -44,7 +44,7 @@ function SummaryCard({
     >
       <p
         className={`text-xs font-semibold uppercase tracking-normal ${
-          prominent ? "text-white/80" : "text-muted"
+          prominent ? "text-brand-foreground" : "text-muted"
         }`}
       >
         {label}

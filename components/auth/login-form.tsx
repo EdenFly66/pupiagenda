@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 import { useEffect, useState } from "react";
+import { StrawberryLogo } from "@/components/brand/StrawberryLogo";
 import { supabase } from "@/lib/supabase";
 
 export function LoginForm() {
@@ -73,10 +74,13 @@ export function LoginForm() {
       noValidate
     >
       <div>
-        <p className="text-sm font-semibold uppercase tracking-normal text-brand">
-          PupiAgenda
-        </p>
-        <h1 className="mt-2 text-2xl font-semibold text-foreground">
+        <div className="flex items-center gap-3">
+          <StrawberryLogo className="shrink-0" size="md" />
+          <p className="text-sm font-semibold uppercase tracking-normal text-brand-active">
+            PupiAgenda
+          </p>
+        </div>
+        <h1 className="mt-4 text-2xl font-semibold text-foreground">
           Ingresar
         </h1>
         <p className="mt-2 text-sm leading-6 text-muted">
@@ -122,7 +126,7 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={loading}
-        className="mt-6 inline-flex h-11 w-full items-center justify-center rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white disabled:cursor-not-allowed disabled:opacity-70"
+        className="mt-6 inline-flex h-11 w-full items-center justify-center rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-brand-hover hover:text-brand-foreground active:bg-brand-active disabled:cursor-not-allowed disabled:bg-rose-soft disabled:text-brand-active"
       >
         {loading ? "Ingresando..." : "Ingresar"}
       </button>
@@ -131,4 +135,4 @@ export function LoginForm() {
 }
 
 const inputClassName =
-  "mt-2 h-12 w-full rounded-2xl border border-rose-100 bg-white/95 px-4 text-sm text-foreground shadow-sm outline-none transition placeholder:text-stone-400 focus:border-brand focus:ring-4 focus:ring-rose-100";
+  "mt-2 h-12 w-full rounded-2xl border border-rose-100 bg-white/95 px-4 text-sm text-foreground shadow-sm outline-none transition placeholder:text-placeholder focus:border-brand focus:ring-4 focus:ring-rose-soft";

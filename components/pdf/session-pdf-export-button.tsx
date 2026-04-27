@@ -11,7 +11,7 @@ type SessionPDFExportButtonProps = {
 
 export function SessionPDFExportButton({
   session,
-  variant = "secondary",
+  variant = "primary",
 }: SessionPDFExportButtonProps) {
   const pdfRef = useRef<HTMLDivElement>(null);
   const [exporting, setExporting] = useState(false);
@@ -54,8 +54,8 @@ export function SessionPDFExportButton({
           disabled={exporting}
           className={
             variant === "primary"
-              ? "inline-flex h-10 w-full items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
-              : "inline-flex h-10 w-full items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
+              ? "inline-flex h-10 w-full items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-brand-hover hover:text-brand-foreground active:bg-brand-active disabled:cursor-not-allowed disabled:bg-rose-soft disabled:text-brand-active sm:w-auto"
+              : "inline-flex h-10 w-full items-center justify-center rounded-2xl border border-leaf bg-white px-4 text-sm font-semibold text-leaf-foreground shadow-sm transition hover:bg-leaf-soft hover:text-leaf-strong disabled:cursor-not-allowed disabled:bg-background disabled:text-muted sm:w-auto"
           }
         >
           {exporting ? "Generando..." : "Exportar PDF"}

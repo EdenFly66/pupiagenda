@@ -61,7 +61,7 @@ export function PatientSelector({ value, onChange }: PatientSelectorProps) {
         value={value}
         onChange={onChange}
         disabled={loading}
-        className="mt-2 h-12 w-full rounded-2xl border border-rose-100 bg-white/95 px-4 text-sm font-medium text-foreground shadow-sm outline-none transition focus:border-brand focus:ring-4 focus:ring-rose-100"
+        className="mt-2 h-12 w-full rounded-2xl border border-rose-100 bg-white/95 px-4 text-sm font-medium text-foreground shadow-sm outline-none transition focus:border-brand focus:ring-4 focus:ring-rose-soft"
       >
         <option value="">
           {loading ? "Cargando pacientes..." : "Seleccionar paciente"}

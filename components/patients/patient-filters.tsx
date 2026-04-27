@@ -34,8 +34,8 @@ export function PatientFilters({ value, onChange }: PatientFiltersProps) {
             className={cn(
               "h-10 rounded-full border px-4 text-sm font-semibold transition",
               active
-                ? "border-brand bg-brand text-brand-foreground shadow-sm"
-                : "border-rose-100 bg-white/80 text-muted hover:border-rose-200 hover:bg-rose-50 hover:text-foreground",
+                ? "border-brand bg-brand text-brand-foreground shadow-sm hover:bg-brand-hover hover:text-brand-foreground active:bg-brand-active"
+                : "border-leaf bg-white/80 text-leaf-foreground hover:border-leaf hover:bg-leaf-soft hover:text-leaf-strong",
             )}
           >
             {filter.label}

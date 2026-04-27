@@ -23,8 +23,8 @@ export function LogoutButton({ compact = false }: { compact?: boolean }) {
       disabled={loading}
       className={
         compact
-          ? "inline-flex size-10 items-center justify-center rounded-2xl border border-border bg-background text-muted transition hover:bg-rose-50 hover:text-brand disabled:opacity-70"
-          : "inline-flex h-10 items-center justify-center gap-2 rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 disabled:opacity-70"
+          ? "inline-flex size-10 items-center justify-center rounded-2xl border border-border bg-background text-muted transition hover:bg-leaf-soft hover:text-leaf-strong disabled:cursor-not-allowed disabled:text-muted"
+          : "inline-flex h-10 items-center justify-center gap-2 rounded-2xl border border-leaf bg-white px-4 text-sm font-semibold text-leaf-foreground shadow-sm transition hover:bg-leaf-soft hover:text-leaf-strong disabled:cursor-not-allowed disabled:bg-background disabled:text-muted"
       }
       title="Cerrar sesion"
     >

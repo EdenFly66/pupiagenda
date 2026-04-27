@@ -1,0 +1,95 @@
+import type { SVGProps } from "react";
+
+type StrawberryLogoProps = SVGProps<SVGSVGElement> & {
+  size?: "sm" | "md" | "lg";
+  title?: string;
+};
+
+const logoSizes = {
+  sm: 24,
+  md: 40,
+  lg: 64,
+};
+
+export function StrawberryLogo({
+  className,
+  size = "md",
+  title = "PupiAgenda",
+  ...props
+}: StrawberryLogoProps) {
+  const dimension = logoSizes[size];
+
+  return (
+    <svg
+      aria-label={title}
+      className={className}
+      fill="none"
+      height={dimension}
+      role="img"
+      viewBox="0 0 64 64"
+      width={dimension}
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <defs>
+        <filter
+          id="pupiagenda-strawberry-shadow"
+          colorInterpolationFilters="sRGB"
+          filterUnits="userSpaceOnUse"
+          height="66"
+          width="66"
+          x="-1"
+          y="-1"
+        >
+          <feDropShadow
+            dx="0"
+            dy="2"
+            floodColor="#8E2E4A"
+            floodOpacity="0.18"
+            stdDeviation="1.6"
+          />
+        </filter>
+      </defs>
+      <g filter="url(#pupiagenda-strawberry-shadow)">
+      <path
+        d="M10 31.6C10 18.8 19.7 9 32.1 9 44.4 9 54 18.8 54 31.6 54 45.4 43.2 56.7 32.1 59 20.8 56.7 10 45.4 10 31.6Z"
+        fill="#FFFFFF"
+      />
+      <path
+        d="M14.2 31.8C14.2 21.1 22 13.1 32.1 13.1c10 0 17.7 8 17.7 18.7 0 11.4-8.8 20.2-17.7 22.5-9-2.3-17.9-11.1-17.9-22.5Z"
+        fill="#C9436E"
+      />
+      <path
+        d="M21.2 14.9c3.7-7.1 8.2-8.9 11.1-9.4 0 0 .8 5.9-3.2 9.5-3 2.6-7.9-.1-7.9-.1Z"
+        fill="#5CA46E"
+      />
+      <path
+        d="M42.8 14.9c-3.7-7.1-8.2-8.9-11.1-9.4 0 0-.8 5.9 3.2 9.5 3 2.6 7.9-.1 7.9-.1Z"
+        fill="#5CA46E"
+      />
+      <path
+        d="M25 18.1c1.3-5.5 4.8-9.2 7-10.7 2.2 1.5 5.7 5.2 7 10.7-3.8 1.7-10.2 1.7-14 0Z"
+        fill="#2F6F3E"
+      />
+      <path
+        d="M23.3 25.8h.1M33.2 24.3h.1M41.3 29.7h.1M28.2 34.1h.1M37 39.2h.1M27.4 45.1h.1"
+        stroke="#FFFFFF"
+        strokeLinecap="round"
+        strokeWidth="3.2"
+      />
+      <path
+        d="M14.2 31.8C14.2 21.1 22 13.1 32.1 13.1c10 0 17.7 8 17.7 18.7 0 11.4-8.8 20.2-17.7 22.5-9-2.3-17.9-11.1-17.9-22.5Z"
+        stroke="#8E2E4A"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+      <path
+        d="M10 31.6C10 18.8 19.7 9 32.1 9 44.4 9 54 18.8 54 31.6 54 45.4 43.2 56.7 32.1 59 20.8 56.7 10 45.4 10 31.6Z"
+        stroke="#FFFFFF"
+        strokeLinejoin="round"
+        strokeWidth="5"
+      />
+      </g>
+    </svg>
+  );
+}

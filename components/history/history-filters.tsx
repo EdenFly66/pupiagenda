@@ -26,7 +26,7 @@ type HistoryFiltersProps = {
 };
 
 const controlClassName =
-  "mt-2 h-11 w-full rounded-2xl border border-rose-100 bg-white/95 px-4 text-sm text-foreground shadow-sm outline-none transition placeholder:text-stone-400 focus:border-brand focus:ring-4 focus:ring-rose-100";
+  "mt-2 h-11 w-full rounded-2xl border border-rose-100 bg-white/95 px-4 text-sm text-foreground shadow-sm outline-none transition placeholder:text-placeholder focus:border-brand focus:ring-4 focus:ring-rose-soft";
 
 export function HistoryFilters({
   constrainedPatientId,
@@ -45,7 +45,7 @@ export function HistoryFilters({
   const isConstrained = Boolean(constrainedPatientId);
 
   return (
-    <section className="rounded-3xl border border-rose-100 bg-[#fffaf8] p-4 shadow-sm sm:p-5">
+    <section className="rounded-3xl border border-rose-100 bg-background p-4 shadow-sm sm:p-5">
       <div className="grid gap-4 lg:grid-cols-[1fr_220px_190px]">
         <label className="block">
           <span className="text-sm font-semibold text-foreground">Buscar</span>
@@ -119,7 +119,7 @@ export function HistoryFilters({
         {isConstrained ? (
           <Link
             href="/historial"
-            className="inline-flex h-11 items-center justify-center self-end rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50"
+            className="inline-flex h-11 items-center justify-center self-end rounded-2xl border border-leaf bg-white px-4 text-sm font-semibold text-leaf-foreground shadow-sm transition hover:bg-leaf-soft hover:text-leaf-strong"
           >
             Ver historial general
           </Link>

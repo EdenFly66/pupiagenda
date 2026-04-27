@@ -93,13 +93,13 @@ function ActionButton({
 }) {
   const styles: Record<typeof variant, string> = {
     primary:
-      "bg-brand text-brand-foreground shadow-sm hover:bg-[#87304a] hover:text-white",
+      "bg-brand text-brand-foreground shadow-sm hover:bg-brand-hover hover:text-brand-foreground active:bg-brand-active disabled:bg-rose-soft disabled:text-brand-active",
     secondary:
-      "border border-rose-100 bg-white text-foreground shadow-sm hover:bg-rose-50",
+      "border border-leaf bg-white text-leaf-foreground shadow-sm hover:bg-leaf-soft hover:text-leaf-strong disabled:bg-background disabled:text-muted",
     softDanger:
-      "border border-rose-200 bg-rose-50 text-rose-900 shadow-sm hover:bg-rose-100",
+      "border border-danger bg-danger-soft text-danger shadow-sm hover:bg-white disabled:bg-background disabled:text-muted",
     outline:
-      "border border-violet-200 bg-white text-violet-900 shadow-sm hover:bg-violet-50",
+      "border border-leaf bg-white text-leaf-foreground shadow-sm hover:bg-leaf-soft hover:text-leaf-strong disabled:bg-background disabled:text-muted",
   };
 
   return (
@@ -107,7 +107,7 @@ function ActionButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`inline-flex h-11 w-full items-center justify-center rounded-2xl px-5 text-sm font-semibold transition disabled:cursor-not-allowed disabled:opacity-70 xl:w-auto ${styles[variant]}`}
+      className={`inline-flex h-11 w-full items-center justify-center rounded-2xl px-5 text-sm font-semibold transition disabled:cursor-not-allowed xl:w-auto ${styles[variant]}`}
     >
       {loading ? "Guardando..." : children}
     </button>

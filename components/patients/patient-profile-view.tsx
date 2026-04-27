@@ -311,7 +311,7 @@ function SummaryPanel({
           </div>
         </div>
 
-        <div className="rounded-3xl border border-rose-100 bg-[#fffaf8] p-4 lg:max-w-md">
+        <div className="rounded-3xl border border-rose-100 bg-background p-4 lg:max-w-md">
           <p className="text-xs font-semibold uppercase tracking-normal text-brand">
             Objetivo co-construido
           </p>
@@ -375,13 +375,13 @@ function RecentSessionsSection({
         <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
           <Link
             href={`/sesiones/nueva?patientId=${patientId}`}
-            className="inline-flex h-10 w-full items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white sm:w-auto"
+            className="inline-flex h-10 w-full items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-brand-hover hover:text-brand-foreground active:bg-brand-active sm:w-auto"
           >
             Nueva sesion
           </Link>
           <Link
             href={`/historial?patientId=${patientId}`}
-            className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 sm:w-auto"
+            className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-leaf bg-white px-4 text-sm font-semibold text-leaf-foreground shadow-sm transition hover:bg-leaf-soft hover:text-leaf-strong sm:w-auto"
           >
             Ver historial completo
           </Link>
@@ -436,20 +436,20 @@ function ProfileActions({
     <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
       <Link
         href="/pacientes"
-        className="inline-flex h-11 w-full items-center justify-center rounded-2xl border border-rose-100 bg-white px-5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 sm:w-auto"
+        className="inline-flex h-11 w-full items-center justify-center rounded-2xl border border-leaf bg-white px-5 text-sm font-semibold text-leaf-foreground shadow-sm transition hover:bg-leaf-soft hover:text-leaf-strong sm:w-auto"
       >
         Volver
       </Link>
       <Link
         href={`/pacientes/${patient.id}/editar`}
-        className="inline-flex h-11 w-full items-center justify-center rounded-2xl border border-rose-100 bg-white px-5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 sm:w-auto"
+        className="inline-flex h-11 w-full items-center justify-center rounded-2xl border border-leaf bg-white px-5 text-sm font-semibold text-leaf-foreground shadow-sm transition hover:bg-leaf-soft hover:text-leaf-strong sm:w-auto"
       >
         Editar paciente
       </Link>
       <PatientHistoryPDFExportButton patient={patient} sessions={sessions} />
       <Link
         href={`/sesiones/nueva?patientId=${patient.id}`}
-        className="inline-flex h-11 w-full items-center justify-center rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white sm:w-auto"
+        className="inline-flex h-11 w-full items-center justify-center rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-brand-hover hover:text-brand-foreground active:bg-brand-active sm:w-auto"
       >
         Nueva sesion
       </Link>
@@ -461,7 +461,7 @@ function BackButton() {
   return (
     <Link
       href="/pacientes"
-      className="inline-flex h-11 items-center justify-center rounded-2xl border border-rose-100 bg-white px-5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50"
+      className="inline-flex h-11 items-center justify-center rounded-2xl border border-leaf bg-white px-5 text-sm font-semibold text-leaf-foreground shadow-sm transition hover:bg-leaf-soft hover:text-leaf-strong"
     >
       Volver
     </Link>
@@ -480,7 +480,7 @@ function SectionBlock({
   return (
     <SectionCard
       className={`rounded-3xl border-rose-100 ${
-        tone === "warm" ? "bg-[#fffaf8]" : "bg-white/90"
+        tone === "warm" ? "bg-background" : "bg-white/90"
       }`}
     >
       <h3 className="text-base font-semibold text-foreground">{title}</h3>
@@ -495,7 +495,7 @@ function DetailGrid({ children }: { children: ReactNode }) {
 
 function Detail({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-rose-50/60 p-4">
+    <div className="rounded-2xl bg-rose-soft p-4">
       <dt className="text-xs font-semibold uppercase tracking-normal text-muted">
         {label}
       </dt>
@@ -527,13 +527,13 @@ function PatientSessionItem({
           <button
             type="button"
             onClick={() => setExpanded((current) => !current)}
-            className="inline-flex h-10 w-full items-center justify-center rounded-2xl bg-rose-50 px-4 text-sm font-semibold text-brand transition hover:bg-rose-100 sm:w-auto"
+            className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-leaf bg-white px-4 text-sm font-semibold text-leaf-foreground transition hover:bg-leaf-soft hover:text-leaf-strong sm:w-auto"
           >
             {expanded ? "Ocultar detalle" : "Ver detalle"}
           </button>
           <Link
             href={`/sesiones/${session.id}/editar`}
-            className="inline-flex h-10 w-full items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground transition hover:bg-[#87304a] hover:text-white sm:w-auto"
+            className="inline-flex h-10 w-full items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover hover:text-brand-foreground active:bg-brand-active sm:w-auto"
           >
             Editar sesion
           </Link>
@@ -562,7 +562,7 @@ function PatientSessionItem({
 
 function SessionDetail({ title, value }: { title: string; value: string }) {
   return (
-    <div className="rounded-2xl bg-[#fffaf8] p-4">
+    <div className="rounded-2xl bg-background p-4">
       <p className="text-sm font-semibold">{title}</p>
       <p className="mt-2 text-sm leading-6 text-muted">{value}</p>
     </div>
@@ -583,7 +583,7 @@ function LongDetail({
       className={`rounded-2xl p-4 ${
         highlight
           ? "border border-rose-100 bg-white shadow-sm"
-          : "bg-rose-50/60"
+          : "bg-rose-soft"
       }`}
     >
       <p className="text-sm font-semibold text-foreground">{title}</p>
@@ -606,7 +606,7 @@ function PatientStatusPill({ status }: { status: string | null }) {
   const label = patientStatusLabels[normalizedStatus] ?? profileValue(status);
 
   return (
-    <span className="inline-flex rounded-full border border-rose-200 bg-rose-50 px-3 py-1 text-xs font-semibold text-rose-900">
+    <span className="inline-flex rounded-full border border-leaf bg-leaf-soft px-3 py-1 text-xs font-semibold text-leaf-strong">
       {label}
     </span>
   );

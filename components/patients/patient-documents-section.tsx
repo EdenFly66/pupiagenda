@@ -131,7 +131,7 @@ export function PatientDocumentsSection({ patientId }: { patientId: string }) {
   }
 
   return (
-    <section className="rounded-3xl border border-rose-100 bg-[#fffaf8] p-5 shadow-sm sm:p-6">
+    <section className="rounded-3xl border border-rose-100 bg-background p-5 shadow-sm sm:p-6">
       <div className="flex flex-col gap-2">
         <h3 className="text-base font-semibold text-foreground">Documentos</h3>
         <p className="text-sm leading-6 text-muted">
@@ -150,7 +150,7 @@ export function PatientDocumentsSection({ patientId }: { patientId: string }) {
       ) : null}
 
       {success ? (
-        <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-900">
+        <div className="mt-5 rounded-2xl border border-leaf bg-leaf-soft p-4 text-sm leading-6 text-leaf-strong">
           {success}
         </div>
       ) : null}

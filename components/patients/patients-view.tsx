@@ -77,7 +77,7 @@ export function PatientsView() {
 
   return (
     <div className="space-y-5">
-      <div className="rounded-3xl border border-rose-100 bg-[#fffaf8] p-4 shadow-sm sm:p-5">
+      <div className="rounded-3xl border border-rose-100 bg-background p-4 shadow-sm sm:p-5">
         <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
           <PatientSearch value={query} onChange={setQuery} />
           <div className="rounded-2xl bg-white/70 px-4 py-3 text-sm font-medium text-muted">

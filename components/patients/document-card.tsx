@@ -44,7 +44,7 @@ export function DocumentCard({
             type="button"
             onClick={() => onDownload(document)}
             disabled={downloading || !document.file_path}
-            className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
+            className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-leaf bg-white px-4 text-sm font-semibold text-leaf-foreground shadow-sm transition hover:bg-leaf-soft hover:text-leaf-strong disabled:cursor-not-allowed disabled:bg-background disabled:text-muted sm:w-auto"
           >
             {downloading ? "Preparando..." : "Descargar"}
           </button>
@@ -52,7 +52,7 @@ export function DocumentCard({
             type="button"
             onClick={() => onDelete(document)}
             disabled={deleting}
-            className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-rose-200 bg-rose-50 px-4 text-sm font-semibold text-rose-900 shadow-sm transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
+            className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-danger bg-danger-soft px-4 text-sm font-semibold text-danger shadow-sm transition hover:bg-white disabled:cursor-not-allowed disabled:bg-background disabled:text-muted sm:w-auto"
           >
             {deleting ? "Eliminando..." : "Eliminar"}
           </button>

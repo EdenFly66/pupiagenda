@@ -162,7 +162,7 @@ export function DocumentUploadForm({
           onChange={updateFile}
           type="file"
           accept=".pdf,.docx,.png,.jpg,.jpeg,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/png,image/jpeg"
-          className="mt-2 w-full rounded-2xl border border-dashed border-rose-200 bg-[#fffaf8] px-4 py-4 text-sm text-foreground file:mb-2 file:mr-4 file:rounded-2xl file:border-0 file:bg-brand file:px-4 file:py-2 file:text-sm file:font-semibold file:text-brand-foreground hover:file:bg-[#87304a] sm:file:mb-0"
+          className="mt-2 w-full rounded-2xl border border-dashed border-rose-200 bg-background px-4 py-4 text-sm text-foreground file:mb-2 file:mr-4 file:rounded-2xl file:border-0 file:bg-brand file:px-4 file:py-2 file:text-sm file:font-semibold file:text-brand-foreground hover:file:bg-brand-hover sm:file:mb-0"
         />
         <span className="mt-2 block text-xs leading-5 text-muted">
           PDF, DOCX, PNG o JPG. Maximo 10 MB.
@@ -176,7 +176,7 @@ export function DocumentUploadForm({
       ) : null}
 
       {success ? (
-        <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-3 text-sm leading-6 text-emerald-900">
+        <div className="mt-4 rounded-2xl border border-leaf bg-leaf-soft p-3 text-sm leading-6 text-leaf-strong">
           {success}
         </div>
       ) : null}
@@ -185,7 +185,7 @@ export function DocumentUploadForm({
         <button
           type="submit"
           disabled={uploading}
-          className="inline-flex h-11 w-full items-center justify-center rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto"
+          className="inline-flex h-11 w-full items-center justify-center rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-brand-hover hover:text-brand-foreground active:bg-brand-active disabled:cursor-not-allowed disabled:bg-rose-soft disabled:text-brand-active sm:w-auto"
         >
           {uploading ? "Subiendo..." : "Subir documento"}
         </button>
@@ -195,7 +195,7 @@ export function DocumentUploadForm({
 }
 
 const inputClassName =
-  "mt-2 h-11 w-full rounded-2xl border border-rose-100 bg-white/95 px-4 text-sm text-foreground shadow-sm outline-none transition placeholder:text-stone-400 focus:border-brand focus:ring-4 focus:ring-rose-100";
+  "mt-2 h-11 w-full rounded-2xl border border-rose-100 bg-white/95 px-4 text-sm text-foreground shadow-sm outline-none transition placeholder:text-placeholder focus:border-brand focus:ring-4 focus:ring-rose-soft";
 
 function validateUpload(title: string, file: File | null) {
   if (!title.trim()) {

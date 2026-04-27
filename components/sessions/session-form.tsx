@@ -248,7 +248,7 @@ export function SessionForm({
 
   return (
     <form className="mx-auto max-w-5xl space-y-8">
-      <section className="rounded-3xl border border-rose-100 bg-[#fffaf8] p-5 shadow-sm sm:p-6">
+      <section className="rounded-3xl border border-rose-100 bg-background p-5 shadow-sm sm:p-6">
         {draftToRestore ? (
           <div className="mb-5 rounded-3xl border border-rose-200 bg-white/90 p-4 shadow-sm">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -264,14 +264,14 @@ export function SessionForm({
                 <button
                   type="button"
                   onClick={discardDraft}
-                  className="inline-flex h-10 items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground transition hover:bg-rose-50"
+                  className="inline-flex h-10 items-center justify-center rounded-2xl border border-leaf bg-white px-4 text-sm font-semibold text-leaf-foreground transition hover:bg-leaf-soft hover:text-leaf-strong"
                 >
                   Descartar
                 </button>
                 <button
                   type="button"
                   onClick={restoreDraft}
-                  className="inline-flex h-10 items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground transition hover:bg-[#87304a] hover:text-white"
+                  className="inline-flex h-10 items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground transition hover:bg-brand-hover hover:text-brand-foreground active:bg-brand-active"
                 >
                   Restaurar borrador
                 </button>
@@ -313,7 +313,7 @@ export function SessionForm({
         ) : null}
 
         {successMessage ? (
-          <div className="mt-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-900">
+          <div className="mt-5 rounded-2xl border border-leaf bg-leaf-soft p-4 text-sm leading-6 text-leaf-strong">
             {successMessage}
           </div>
         ) : null}
@@ -358,7 +358,7 @@ export function SessionForm({
         </Card>
       </section>
 
-      <section className="rounded-3xl border border-rose-100 bg-[#fffaf8] p-5 shadow-sm sm:p-6">
+      <section className="rounded-3xl border border-rose-100 bg-background p-5 shadow-sm sm:p-6">
         <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
           <p className="text-sm leading-6 text-muted">
             Plantillas automaticas para acelerar la redaccion clinica.
@@ -367,14 +367,14 @@ export function SessionForm({
             <button
               type="button"
               onClick={generateSummary}
-              className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 sm:w-auto"
+              className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-leaf bg-white px-4 text-sm font-semibold text-leaf-foreground shadow-sm transition hover:bg-leaf-soft hover:text-leaf-strong sm:w-auto"
             >
               Generar resumen
             </button>
             <button
               type="button"
               onClick={generateEvolution}
-              className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 sm:w-auto"
+              className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-leaf bg-white px-4 text-sm font-semibold text-leaf-foreground shadow-sm transition hover:bg-leaf-soft hover:text-leaf-strong sm:w-auto"
             >
               Generar evolucion
             </button>
@@ -390,7 +390,7 @@ export function SessionForm({
               name="emotionalState"
               value={form.emotionalState}
               onChange={updateField}
-              className="mt-2 h-12 w-full rounded-2xl border border-rose-100 bg-white/95 px-4 text-sm font-medium text-foreground shadow-sm outline-none transition focus:border-brand focus:ring-4 focus:ring-rose-100"
+              className="mt-2 h-12 w-full rounded-2xl border border-rose-100 bg-white/95 px-4 text-sm font-medium text-foreground shadow-sm outline-none transition focus:border-brand focus:ring-4 focus:ring-rose-soft"
             >
               <option value="">Seleccionar estado</option>
               {emotionalStates.map((state) => (

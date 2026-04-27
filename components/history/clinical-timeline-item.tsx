@@ -36,14 +36,14 @@ export function ClinicalTimelineItem({
             {session.patientId ? (
               <Link
                 href={`/pacientes/${session.patientId}`}
-                className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-rose-100 bg-white px-4 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 sm:w-auto"
+              className="inline-flex h-10 w-full items-center justify-center rounded-2xl border border-leaf bg-white px-4 text-sm font-semibold text-leaf-foreground shadow-sm transition hover:bg-leaf-soft hover:text-leaf-strong sm:w-auto"
               >
                 Ver paciente
               </Link>
             ) : null}
             <Link
               href={`/sesiones/${session.id}/editar`}
-              className="inline-flex h-10 w-full items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white sm:w-auto"
+              className="inline-flex h-10 w-full items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-brand-hover hover:text-brand-foreground active:bg-brand-active sm:w-auto"
             >
               Editar sesion
             </Link>
@@ -56,7 +56,7 @@ export function ClinicalTimelineItem({
           <InfoBlock label="Motivo / foco" value={session.motivo} />
         </div>
 
-        <div className="mt-4 rounded-2xl bg-[#fffaf8] p-4">
+        <div className="mt-4 rounded-2xl bg-background p-4">
           <p className="text-xs font-semibold uppercase tracking-normal text-muted">
             {session.hasSessionSummary ? "Resumen de sesion" : "Contenido de sesion"}
           </p>
@@ -83,7 +83,7 @@ export function ClinicalTimelineItem({
         <button
           type="button"
           onClick={() => setExpanded((current) => !current)}
-          className="mt-6 inline-flex h-10 w-full items-center justify-center rounded-2xl bg-rose-50 px-4 text-sm font-semibold text-brand transition hover:bg-rose-100 sm:w-auto"
+          className="mt-6 inline-flex h-10 w-full items-center justify-center rounded-2xl border border-leaf bg-white px-4 text-sm font-semibold text-leaf-foreground transition hover:bg-leaf-soft hover:text-leaf-strong sm:w-auto"
         >
           {expanded ? "Ocultar detalle" : "Ver detalle"}
         </button>
@@ -105,7 +105,7 @@ function InfoBlock({ label, value }: { label: string; value: string }) {
 
 function Detail({ title, value }: { title: string; value: string }) {
   return (
-    <section className="rounded-2xl bg-[#fffaf8] p-4">
+    <section className="rounded-2xl bg-background p-4">
       <h4 className="text-sm font-semibold text-foreground">{title}</h4>
       <p className="mt-2 text-sm leading-6 text-muted">{value}</p>
     </section>

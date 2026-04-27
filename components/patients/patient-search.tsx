@@ -10,7 +10,7 @@ export function PatientSearch({ value, onChange }: PatientSearchProps) {
       <input
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="h-11 w-full rounded-2xl border border-rose-100 bg-white/90 px-4 text-sm text-foreground shadow-sm outline-none transition placeholder:text-stone-400 focus:border-brand focus:ring-4 focus:ring-rose-100"
+        className="h-11 w-full rounded-2xl border border-rose-100 bg-white/90 px-4 text-sm text-foreground shadow-sm outline-none transition placeholder:text-placeholder focus:border-brand focus:ring-4 focus:ring-rose-soft"
         placeholder="Buscar por nombre, correo o telefono"
         type="search"
       />

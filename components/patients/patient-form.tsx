@@ -282,16 +282,16 @@ export function PatientForm({
       ) : null}
 
       {successMessage ? (
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-emerald-900">
+        <div className="rounded-2xl border border-leaf bg-leaf-soft p-4 text-sm leading-6 text-leaf-strong">
           {successMessage}
         </div>
       ) : null}
 
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-end">
-        <Link href={cancelHref} className="inline-flex h-11 w-full items-center justify-center rounded-2xl border border-rose-100 bg-white px-5 text-sm font-semibold text-foreground shadow-sm transition hover:bg-rose-50 sm:w-auto">
+        <Link href={cancelHref} className="inline-flex h-11 w-full items-center justify-center rounded-2xl border border-leaf bg-white px-5 text-sm font-semibold text-leaf-foreground shadow-sm transition hover:bg-leaf-soft hover:text-leaf-strong sm:w-auto">
           Cancelar
         </Link>
-        <button type="submit" disabled={loading} className="inline-flex h-11 w-full items-center justify-center rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-[#87304a] hover:text-white disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto">
+        <button type="submit" disabled={loading} className="inline-flex h-11 w-full items-center justify-center rounded-2xl bg-brand px-5 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-brand-hover hover:text-brand-foreground active:bg-brand-active disabled:cursor-not-allowed disabled:bg-rose-soft disabled:text-brand-active sm:w-auto">
           {loading
             ? "Guardando..."
             : mode === "edit"
@@ -339,7 +339,7 @@ export function patientRowToFormState(patient: PatientRow): PatientFormState {
 }
 
 const inputClassName =
-  "mt-2 h-12 w-full rounded-2xl border border-rose-100 bg-white/95 px-4 text-sm text-foreground shadow-sm outline-none transition placeholder:text-stone-400 focus:border-brand focus:ring-4 focus:ring-rose-100";
+  "mt-2 h-12 w-full rounded-2xl border border-rose-100 bg-white/95 px-4 text-sm text-foreground shadow-sm outline-none transition placeholder:text-placeholder focus:border-brand focus:ring-4 focus:ring-rose-soft";
 
 function FormSection({
   title,
@@ -556,7 +556,7 @@ function PatientTextarea({
         value={value}
         onChange={onChange}
         rows={4}
-        className="mt-2 w-full resize-y rounded-2xl border border-rose-100 bg-white/95 px-4 py-3 text-sm leading-6 text-foreground shadow-sm outline-none transition placeholder:text-stone-400 focus:border-brand focus:ring-4 focus:ring-rose-100"
+        className="mt-2 w-full resize-y rounded-2xl border border-rose-100 bg-white/95 px-4 py-3 text-sm leading-6 text-foreground shadow-sm outline-none transition placeholder:text-placeholder focus:border-brand focus:ring-4 focus:ring-rose-soft"
       />
     </label>
   );
