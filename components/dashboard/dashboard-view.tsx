@@ -211,7 +211,7 @@ export function DashboardView() {
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="space-y-6 bg-[radial-gradient(circle_at_top_left,#fff0f3_0,transparent_28rem)]">
+    <div className="space-y-6 bg-[radial-gradient(circle_at_top_left,var(--theme-soft-bg)_0,transparent_28rem)]">
       <PageHeader
         eyebrow="Resumen clinico"
         title="Dashboard"

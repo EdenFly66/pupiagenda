@@ -1,5 +1,6 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { SectionCard } from "@/components/ui/section-card";
+import { ThemeSelector } from "@/components/theme/theme-selector";
 
 const settings = [
   {
@@ -24,6 +25,16 @@ export default function SettingsPage() {
         title="Configuracion"
         description="Preferencias generales para mantener la experiencia ordenada."
       />
+
+      <SectionCard>
+        <div className="mb-5">
+          <h3 className="text-base font-semibold">Apariencia</h3>
+          <p className="mt-2 text-sm leading-6 text-muted">
+            Personaliza la paleta visual de tu espacio clínico.
+          </p>
+        </div>
+        <ThemeSelector />
+      </SectionCard>
 
       <div className="grid gap-4 lg:grid-cols-3">
         {settings.map((item) => (

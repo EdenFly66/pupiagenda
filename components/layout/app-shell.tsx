@@ -79,7 +79,7 @@ function TopHeader() {
 function MobileNavigation({ pathname }: { pathname: string }) {
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface px-2 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-2 shadow-[0_-10px_30px_rgba(159,61,90,0.12)] lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface px-2 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-2 shadow-[0_-10px_30px_color-mix(in_srgb,var(--theme-primary)_18%,transparent)] lg:hidden"
       aria-label="Navegacion movil"
     >
       <div className="grid grid-cols-5 gap-1">

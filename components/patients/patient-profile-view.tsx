@@ -125,7 +125,7 @@ export function PatientProfileView({ patientId }: { patientId: string }) {
   const age = getPatientAge(patient.birth_date);
 
   return (
-    <div className="space-y-6 bg-[radial-gradient(circle_at_top_left,#fff0f3_0,transparent_28rem)]">
+    <div className="space-y-6 bg-[radial-gradient(circle_at_top_left,var(--theme-soft-bg)_0,transparent_28rem)]">
       <PageHeader
         eyebrow="Perfil de paciente"
         title={getPatientFullName(patient)}
