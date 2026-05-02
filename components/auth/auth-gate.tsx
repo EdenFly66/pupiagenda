@@ -20,7 +20,10 @@ export function AuthGate({ children }: { children: ReactNode }) {
       }
 
       if (!data.session) {
+        setAuthorized(false);
         router.replace("/login");
+        router.refresh();
+        window.location.replace("/login");
         return;
       }
 
@@ -35,6 +38,13 @@ export function AuthGate({ children }: { children: ReactNode }) {
       if (event === "SIGNED_OUT" || !session) {
         setAuthorized(false);
         router.replace("/login");
+        router.refresh();
+        window.location.replace("/login");
+        return;
+      }
+
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        setAuthorized(true);
       }
     });
 

@@ -5,6 +5,7 @@ import {
   Megaphone,
   MessageSquarePlus,
   Settings,
+  ShieldCheck,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -52,6 +53,35 @@ export const navigationItems: NavigationItem[] = [
     label: "Sugerencias",
     shortLabel: "Ideas",
     icon: MessageSquarePlus,
+  },
+  {
+    href: "/configuracion",
+    label: "Configuracion",
+    shortLabel: "Ajustes",
+    icon: Settings,
+  },
+];
+
+export const adminNavigationItem: NavigationItem = {
+  href: "/admin",
+  label: "Admin",
+  shortLabel: "Admin",
+  icon: ShieldCheck,
+};
+
+export const adminNavigationItems: NavigationItem[] = [
+  adminNavigationItem,
+  {
+    href: "/sugerencias",
+    label: "Sugerencias",
+    shortLabel: "Ideas",
+    icon: MessageSquarePlus,
+  },
+  {
+    href: "/anuncios",
+    label: "Anuncios",
+    shortLabel: "Avisos",
+    icon: Megaphone,
   },
   {
     href: "/configuracion",

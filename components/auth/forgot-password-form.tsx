@@ -3,7 +3,7 @@
 import Link from "next/link";
 import type { FormEvent } from "react";
 import { useState } from "react";
-import { StrawberryLogo } from "@/components/brand/StrawberryLogo";
+import { AppLogo } from "@/components/brand/AppLogo";
 import { supabase } from "@/lib/supabase";
 
 const successMessage =
@@ -54,7 +54,7 @@ export function ForgotPasswordForm() {
     >
       <div>
         <div className="flex items-center gap-3">
-          <StrawberryLogo className="shrink-0" size="md" />
+          <AppLogo className="shrink-0" size={48} />
           <p className="text-sm font-semibold uppercase tracking-normal text-brand-active">
             PupiAgenda
           </p>
