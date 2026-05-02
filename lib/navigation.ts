@@ -2,6 +2,8 @@ import {
   ClipboardPlus,
   History,
   LayoutDashboard,
+  Megaphone,
+  MessageSquarePlus,
   Settings,
   Users,
   type LucideIcon,
@@ -38,6 +40,18 @@ export const navigationItems: NavigationItem[] = [
     label: "Historial",
     shortLabel: "Historial",
     icon: History,
+  },
+  {
+    href: "/anuncios",
+    label: "Anuncios",
+    shortLabel: "Avisos",
+    icon: Megaphone,
+  },
+  {
+    href: "/sugerencias",
+    label: "Sugerencias",
+    shortLabel: "Ideas",
+    icon: MessageSquarePlus,
   },
   {
     href: "/configuracion",

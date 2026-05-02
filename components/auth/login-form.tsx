@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import type { FormEvent } from "react";
 import { useEffect, useState } from "react";
 import { StrawberryLogo } from "@/components/brand/StrawberryLogo";
@@ -103,9 +104,7 @@ export function LoginForm() {
         </label>
 
         <label className="block">
-          <span className="text-sm font-semibold text-foreground">
-            Contrasena
-          </span>
+          <span className="text-sm font-semibold text-foreground">Contraseña</span>
           <input
             value={password}
             onChange={(event) => setPassword(event.target.value)}
@@ -115,6 +114,15 @@ export function LoginForm() {
             required
           />
         </label>
+      </div>
+
+      <div className="mt-3 text-right">
+        <Link
+          href="/auth/forgot-password"
+          className="text-sm font-semibold text-brand-active transition hover:text-brand-hover"
+        >
+          ¿Olvidaste tu contraseña?
+        </Link>
       </div>
 
       {error ? (

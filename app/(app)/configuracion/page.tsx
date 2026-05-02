@@ -1,6 +1,7 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { SectionCard } from "@/components/ui/section-card";
 import { ThemeSelector } from "@/components/theme/theme-selector";
+import Link from "next/link";
 
 const settings = [
   {
@@ -34,6 +35,23 @@ export default function SettingsPage() {
           </p>
         </div>
         <ThemeSelector />
+      </SectionCard>
+
+      <SectionCard>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h3 className="text-base font-semibold">Seguridad</h3>
+            <p className="mt-2 text-sm leading-6 text-muted">
+              Actualiza tu contraseña cuando necesites reforzar el acceso a tu cuenta.
+            </p>
+          </div>
+          <Link
+            href="/auth/reset-password"
+            className="inline-flex h-10 w-full items-center justify-center rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-brand-hover hover:text-brand-foreground active:bg-brand-active sm:w-auto"
+          >
+            Cambiar contraseña
+          </Link>
+        </div>
       </SectionCard>
 
       <div className="grid gap-4 lg:grid-cols-3">
