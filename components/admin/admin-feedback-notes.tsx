@@ -6,16 +6,19 @@ import { updateAdminFeedback } from "@/lib/admin";
 
 type AdminFeedbackNotesProps = {
   feedbackId: string;
-  value: string;
+  adminNotes: string;
+  adminDecision: string;
   onSaved: () => Promise<void>;
 };
 
 export function AdminFeedbackNotes({
+  adminDecision: initialAdminDecision,
+  adminNotes: initialAdminNotes,
   feedbackId,
   onSaved,
-  value,
 }: AdminFeedbackNotesProps) {
-  const [notes, setNotes] = useState(value);
+  const [notes, setNotes] = useState(initialAdminNotes);
+  const [decision, setDecision] = useState(initialAdminDecision);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -24,9 +27,13 @@ export function AdminFeedbackNotes({
     setMessage(null);
 
     try {
-      await updateAdminFeedback({ id: feedbackId, adminNotes: notes });
+      await updateAdminFeedback({
+        id: feedbackId,
+        adminDecision: decision,
+        adminNotes: notes,
+      });
       await onSaved();
-      setMessage("Notas guardadas.");
+      setMessage("Roadmap guardado.");
     } catch (saveError) {
       setMessage(
         saveError instanceof Error
@@ -39,10 +46,23 @@ export function AdminFeedbackNotes({
   }
 
   return (
-    <div>
+    <div className="space-y-4">
       <label className="block">
         <span className="text-xs font-semibold uppercase tracking-normal text-muted">
-          Notas admin
+          Decision admin
+        </span>
+        <textarea
+          value={decision}
+          onChange={(event) => setDecision(event.target.value)}
+          className="mt-2 min-h-24 w-full resize-y rounded-2xl border border-rose-100 bg-white px-3 py-3 text-sm leading-6 text-foreground shadow-sm outline-none transition placeholder:text-placeholder focus:border-brand focus:ring-4 focus:ring-rose-soft disabled:cursor-not-allowed disabled:bg-neutral-soft"
+          placeholder="Define la decision de producto, alcance o criterio de salida."
+          disabled={saving}
+        />
+      </label>
+
+      <label className="block">
+        <span className="text-xs font-semibold uppercase tracking-normal text-muted">
+          Notas internas
         </span>
         <textarea
           value={notes}
@@ -58,11 +78,15 @@ export function AdminFeedbackNotes({
         <button
           type="button"
           onClick={handleSave}
-          disabled={saving || notes.trim() === value.trim()}
+          disabled={
+            saving ||
+            (notes.trim() === initialAdminNotes.trim() &&
+              decision.trim() === initialAdminDecision.trim())
+          }
           className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-2xl bg-brand px-4 text-sm font-semibold text-brand-foreground shadow-sm transition hover:bg-brand-hover hover:text-brand-foreground active:bg-brand-active disabled:cursor-not-allowed disabled:bg-rose-soft disabled:text-brand-active sm:w-auto"
         >
           <Save className="size-4" aria-hidden="true" />
-          Guardar notas
+          Guardar roadmap
         </button>
       </div>
     </div>

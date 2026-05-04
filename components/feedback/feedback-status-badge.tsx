@@ -2,6 +2,7 @@ import {
   CheckCircle2,
   CircleDot,
   Clock3,
+  ListTodo,
   Sparkles,
   XCircle,
   type LucideIcon,
@@ -16,12 +17,12 @@ type StatusMeta = {
 };
 
 const statusMeta: Record<FeedbackStatus, StatusMeta> = {
-  new: {
+  pending: {
     label: "Recibida",
     icon: CircleDot,
     className: "border-rose-100 bg-white/90 text-brand-active",
   },
-  in_review: {
+  reviewed: {
     label: "En revision",
     icon: Clock3,
     className: "border-amber-200 bg-amber-50 text-amber-900",
@@ -31,20 +32,25 @@ const statusMeta: Record<FeedbackStatus, StatusMeta> = {
     icon: Sparkles,
     className: "border-leaf bg-leaf-soft text-leaf-strong",
   },
+  in_progress: {
+    label: "En progreso",
+    icon: ListTodo,
+    className: "border-leaf bg-leaf-soft text-leaf-strong",
+  },
   done: {
     label: "Completada",
     icon: CheckCircle2,
     className: "border-leaf bg-leaf-soft text-leaf-strong",
   },
-  closed: {
-    label: "Cerrada",
+  rejected: {
+    label: "Rechazada",
     icon: XCircle,
     className: "border-rose-200 bg-rose-50 text-rose-900",
   },
 };
 
 export function FeedbackStatusBadge({ status }: { status: string }) {
-  const meta = statusMeta[status as FeedbackStatus] ?? statusMeta.new;
+  const meta = statusMeta[status as FeedbackStatus] ?? statusMeta.pending;
   const Icon = meta.icon;
 
   return (

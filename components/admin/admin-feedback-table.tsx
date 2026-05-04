@@ -7,10 +7,14 @@ import { AdminFeedbackStatusSelect } from "@/components/admin/admin-feedback-sta
 import { SectionCard } from "@/components/ui/section-card";
 import { getAdminFeedback } from "@/lib/admin";
 import {
+  adminFeedbackPriorityLabels,
   adminFeedbackStatusLabels,
+  adminFeedbackTargetVersionLabels,
   formatAdminFeedbackDate,
   type AdminFeedbackItem,
+  type AdminFeedbackPriority,
   type AdminFeedbackStatus,
+  type AdminFeedbackTargetVersion,
 } from "@/lib/admin-types";
 
 export function AdminFeedbackTable() {
@@ -98,9 +102,13 @@ export function AdminFeedbackTable() {
                 {item.message}
               </p>
 
-              <dl className="mt-5 grid gap-3 border-t border-rose-100 pt-4 text-sm sm:grid-cols-3">
+              <dl className="mt-5 grid gap-3 border-t border-rose-100 pt-4 text-sm sm:grid-cols-2 xl:grid-cols-4">
                 <Metadata label="Categoria" value={item.category} />
-                <Metadata label="Prioridad" value={item.priority} />
+                <Metadata label="Prioridad" value={formatPriority(item.priority)} />
+                <Metadata
+                  label="Version objetivo"
+                  value={formatTargetVersion(item.targetVersion)}
+                />
                 <Metadata
                   label="Creada"
                   value={formatAdminFeedbackDate(item.createdAt)}
@@ -110,15 +118,18 @@ export function AdminFeedbackTable() {
 
             <div className="space-y-4 rounded-3xl border border-rose-100 bg-background p-4">
               <AdminFeedbackStatusSelect
-                key={`${item.id}-${item.status}`}
+                key={`${item.id}-${item.status}-${item.priority}-${item.targetVersion}`}
                 feedbackId={item.id}
-                value={item.status}
+                priority={item.priority}
+                status={item.status}
+                targetVersion={item.targetVersion}
                 onSaved={refreshFeedback}
               />
               <AdminFeedbackNotes
-                key={`${item.id}-${item.adminNotes}`}
+                key={`${item.id}-${item.adminNotes}-${item.adminDecision}`}
+                adminDecision={item.adminDecision}
+                adminNotes={item.adminNotes}
                 feedbackId={item.id}
-                value={item.adminNotes}
                 onSaved={refreshFeedback}
               />
             </div>
@@ -150,6 +161,14 @@ function Metadata({ label, value }: { label: string; value: string }) {
       <dd className="mt-1 truncate font-medium text-foreground">{value}</dd>
     </div>
   );
+}
+
+function formatPriority(value: string) {
+  return adminFeedbackPriorityLabels[value as AdminFeedbackPriority] ?? value;
+}
+
+function formatTargetVersion(value: string) {
+  return adminFeedbackTargetVersionLabels[value as AdminFeedbackTargetVersion] ?? value;
 }
 
 function AdminFeedbackLoading() {

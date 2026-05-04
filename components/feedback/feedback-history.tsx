@@ -8,11 +8,9 @@ import { SectionCard } from "@/components/ui/section-card";
 import { getUserFeedback } from "@/lib/feedback";
 import {
   feedbackCategoryLabels,
-  feedbackPriorityLabels,
   formatFeedbackDate,
   type FeedbackCategory,
   type FeedbackItem,
-  type FeedbackPriority,
 } from "@/lib/feedback-types";
 
 type FeedbackHistoryProps = {
@@ -121,10 +119,6 @@ function FeedbackHistoryItem({ item }: { item: FeedbackItem }) {
           label={formatCategoryLabel(item.category)}
           iconLabel="Categoria"
         />
-        <MetadataPill
-          label={`Prioridad ${formatPriorityLabel(item.priority)}`}
-          iconLabel="Prioridad"
-        />
       </div>
 
       {item.adminNotes ? (
@@ -201,8 +195,4 @@ function FeedbackHistoryError({ message }: { message: string }) {
 
 function formatCategoryLabel(value: string) {
   return feedbackCategoryLabels[value as FeedbackCategory] ?? value;
-}
-
-function formatPriorityLabel(value: string) {
-  return feedbackPriorityLabels[value as FeedbackPriority] ?? value;
 }

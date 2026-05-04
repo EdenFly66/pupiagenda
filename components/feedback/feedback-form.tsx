@@ -6,9 +6,7 @@ import { useState } from "react";
 import { createFeedback } from "@/lib/feedback";
 import {
   feedbackCategoryLabels,
-  feedbackPriorityLabels,
   type FeedbackCategory,
-  type FeedbackPriority,
 } from "@/lib/feedback-types";
 
 export const feedbackCreatedEventName = "pupiagenda:feedback-created";
@@ -21,15 +19,12 @@ const categoryOptions: FeedbackCategory[] = [
   "other",
 ];
 
-const priorityOptions: FeedbackPriority[] = ["low", "medium", "high"];
-
 type FeedbackFormProps = {
   userId: string;
 };
 
 export function FeedbackForm({ userId }: FeedbackFormProps) {
   const [category, setCategory] = useState<FeedbackCategory>("idea");
-  const [priority, setPriority] = useState<FeedbackPriority>("medium");
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -61,13 +56,11 @@ export function FeedbackForm({ userId }: FeedbackFormProps) {
       await createFeedback({
         userId,
         category,
-        priority,
         title: normalizedTitle,
         message: normalizedMessage,
       });
 
       setCategory("idea");
-      setPriority("medium");
       setTitle("");
       setMessage("");
       setSuccess("Gracias. Tu sugerencia fue enviada correctamente.");
@@ -90,11 +83,11 @@ export function FeedbackForm({ userId }: FeedbackFormProps) {
           Enviar sugerencia
         </h2>
         <p className="mt-1 text-sm leading-6 text-muted">
-          Comparte una idea, mejora o problema para seguir puliendo PupiAgenda.
+          Describe la idea, problema o mejora. La prioridad sera evaluada internamente.
         </p>
       </div>
 
-      <div className="mt-5 grid gap-4 sm:grid-cols-2">
+      <div className="mt-5">
         <label className="block">
           <span className="text-sm font-semibold text-foreground">Categoria</span>
           <select
@@ -105,21 +98,6 @@ export function FeedbackForm({ userId }: FeedbackFormProps) {
             {categoryOptions.map((option) => (
               <option key={option} value={option}>
                 {feedbackCategoryLabels[option]}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="block">
-          <span className="text-sm font-semibold text-foreground">Prioridad</span>
-          <select
-            value={priority}
-            onChange={(event) => setPriority(event.target.value as FeedbackPriority)}
-            className={inputClassName}
-          >
-            {priorityOptions.map((option) => (
-              <option key={option} value={option}>
-                {feedbackPriorityLabels[option]}
               </option>
             ))}
           </select>
@@ -146,7 +124,7 @@ export function FeedbackForm({ userId }: FeedbackFormProps) {
           className={`${inputClassName} min-h-36 resize-y py-3 leading-6`}
           minLength={10}
           required
-          placeholder="Describe la sugerencia con el contexto necesario."
+          placeholder="Describe la idea, problema o mejora. La prioridad sera evaluada internamente."
         />
       </label>
 

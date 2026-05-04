@@ -25,8 +25,8 @@ export async function createFeedback(input: CreateFeedbackInput) {
   const { error } = await supabase.from("feedback").insert({
     user_id: input.userId,
     category: input.category,
-    status: "new",
-    priority: input.priority,
+    status: "pending",
+    priority: "medium",
     title: input.title,
     message: input.message,
   });
