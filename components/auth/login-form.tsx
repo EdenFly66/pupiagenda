@@ -19,15 +19,27 @@ export function LoginForm() {
     let active = true;
 
     async function checkSession() {
-      const { data } = await supabase.auth.getSession();
+      try {
+        const { data } = await supabase.auth.getSession();
 
-      if (!active) {
-        return;
-      }
+        if (!active) {
+          return;
+        }
 
-      if (data.session) {
-        router.replace("/dashboard");
-        return;
+        if (data.session?.user) {
+          const destination = await getPostLoginDestination(data.session.user.id);
+
+          if (!active) {
+            return;
+          }
+
+          router.replace(destination);
+          return;
+        }
+      } catch {
+        if (!active) {
+          return;
+        }
       }
 
       setCheckingSession(false);
@@ -45,7 +57,7 @@ export function LoginForm() {
     setError(null);
     setLoading(true);
 
-    const { error: loginError } = await supabase.auth.signInWithPassword({
+    const { data, error: loginError } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password,
     });
@@ -56,7 +68,12 @@ export function LoginForm() {
       return;
     }
 
-    router.replace("/dashboard");
+    const userId = data.user?.id;
+    const destination = userId
+      ? await getPostLoginDestination(userId)
+      : "/dashboard";
+
+    router.replace(destination);
     router.refresh();
   }
 
@@ -144,3 +161,21 @@ export function LoginForm() {
 
 const inputClassName =
   "mt-2 h-12 w-full rounded-2xl border border-rose-100 bg-white/95 px-4 text-sm text-foreground shadow-sm outline-none transition placeholder:text-placeholder focus:border-brand focus:ring-4 focus:ring-rose-soft";
+
+async function getPostLoginDestination(userId: string) {
+  try {
+    const { data, error } = await supabase
+      .from("admin_users")
+      .select("user_id")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (error) {
+      return "/dashboard";
+    }
+
+    return data ? "/admin" : "/dashboard";
+  } catch {
+    return "/dashboard";
+  }
+}
