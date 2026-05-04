@@ -17,6 +17,7 @@ export type AdminFeedbackTargetVersion = (typeof adminFeedbackTargetVersions)[nu
 export type FeedbackAdminRow = {
   id: string;
   user_id?: string | null;
+  version_id?: string | null;
   email?: string | null;
   title?: string | null;
   message?: string | null;
@@ -33,6 +34,7 @@ export type FeedbackAdminRow = {
 export type AdminFeedbackItem = {
   id: string;
   userId: string | null;
+  versionId: string | null;
   email: string;
   title: string;
   message: string;
@@ -42,6 +44,23 @@ export type AdminFeedbackItem = {
   targetVersion: AdminFeedbackTargetVersion | string;
   adminNotes: string;
   adminDecision: string;
+  createdAt: string;
+};
+
+export type ProductVersionRow = {
+  id: string;
+  name?: string | null;
+  description?: string | null;
+  sort_order?: number | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+};
+
+export type ProductVersion = {
+  id: string;
+  name: string;
+  description: string;
+  sortOrder: number;
   createdAt: string;
 };
 
@@ -67,7 +86,7 @@ export const adminFeedbackPriorityLabels: Record<AdminFeedbackPriority, string> 
   low: "Baja",
   medium: "Media",
   high: "Alta",
-  critical: "Critica",
+  critical: "Crítica",
 };
 
 export const adminFeedbackTargetVersionLabels: Record<AdminFeedbackTargetVersion, string> = {
@@ -83,6 +102,7 @@ export function mapFeedbackAdminRow(
   return {
     id: row.id,
     userId: row.user_id ?? null,
+    versionId: row.version_id ?? null,
     email: row.email ?? "Sin correo",
     title: row.title ?? "Sin titulo",
     message: row.message ?? "",
@@ -92,6 +112,16 @@ export function mapFeedbackAdminRow(
     targetVersion: row.target_version ?? "backlog",
     adminNotes: row.admin_notes ?? "",
     adminDecision: row.admin_decision ?? "",
+    createdAt: row.created_at ?? new Date().toISOString(),
+  };
+}
+
+export function mapProductVersionRow(row: ProductVersionRow): ProductVersion {
+  return {
+    id: row.id,
+    name: row.name?.trim() || "Version sin nombre",
+    description: row.description ?? "",
+    sortOrder: row.sort_order ?? 0,
     createdAt: row.created_at ?? new Date().toISOString(),
   };
 }

@@ -1,24 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { updateAdminFeedback } from "@/lib/admin";
+import { updateAdminFeedback, updateAdminFeedbackVersion } from "@/lib/admin";
 import {
   adminFeedbackPriorities,
   adminFeedbackPriorityLabels,
   adminFeedbackStatuses,
   adminFeedbackStatusLabels,
-  adminFeedbackTargetVersionLabels,
-  adminFeedbackTargetVersions,
   type AdminFeedbackPriority,
   type AdminFeedbackStatus,
-  type AdminFeedbackTargetVersion,
+  type ProductVersion,
 } from "@/lib/admin-types";
 
 type AdminFeedbackStatusSelectProps = {
   feedbackId: string;
   status: string;
   priority: string;
-  targetVersion: string;
+  versionId: string | null;
+  versions: ProductVersion[];
   onSaved: () => Promise<void>;
 };
 
@@ -27,11 +26,12 @@ export function AdminFeedbackStatusSelect({
   onSaved,
   priority: initialPriority,
   status: initialStatus,
-  targetVersion: initialTargetVersion,
+  versionId: initialVersionId,
+  versions,
 }: AdminFeedbackStatusSelectProps) {
   const [status, setStatus] = useState(initialStatus);
   const [priority, setPriority] = useState(initialPriority);
-  const [targetVersion, setTargetVersion] = useState(initialTargetVersion);
+  const [versionId, setVersionId] = useState(initialVersionId ?? "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -80,22 +80,22 @@ export function AdminFeedbackStatusSelect({
     }
   }
 
-  async function handleTargetVersionChange(nextTargetVersion: AdminFeedbackTargetVersion) {
-    setTargetVersion(nextTargetVersion);
+  async function handleVersionChange(nextVersionId: string | null) {
+    setVersionId(nextVersionId ?? "");
     setSaving(true);
     setError(null);
     setSuccess(null);
 
     try {
-      await updateAdminFeedback({ id: feedbackId, targetVersion: nextTargetVersion });
+      await updateAdminFeedbackVersion(feedbackId, nextVersionId);
       await onSaved();
-      setSuccess("Version objetivo actualizada.");
+      setSuccess("Version actualizada.");
     } catch (saveError) {
-      setTargetVersion(initialTargetVersion);
+      setVersionId(initialVersionId ?? "");
       setError(
         saveError instanceof Error
           ? saveError.message
-          : "No se pudo guardar la version objetivo.",
+          : "No se pudo guardar la version.",
       );
     } finally {
       setSaving(false);
@@ -146,20 +146,25 @@ export function AdminFeedbackStatusSelect({
       </label>
       <label className="block">
         <span className="text-xs font-semibold uppercase tracking-normal text-muted">
-          Version objetivo
+          Version
         </span>
         <select
-          value={targetVersion}
+          value={versionId}
           onChange={(event) =>
-            handleTargetVersionChange(event.target.value as AdminFeedbackTargetVersion)
+            handleVersionChange(event.target.value || null)
           }
           disabled={saving}
           className="mt-2 h-10 w-full rounded-2xl border border-rose-100 bg-white px-3 text-sm font-medium text-foreground shadow-sm outline-none transition focus:border-brand focus:ring-4 focus:ring-rose-soft disabled:cursor-not-allowed disabled:bg-neutral-soft"
         >
-          {getUnknownOption(targetVersion, adminFeedbackTargetVersions, "Version actual")}
-          {adminFeedbackTargetVersions.map((option) => (
-            <option key={option} value={option}>
-              {adminFeedbackTargetVersionLabels[option]}
+          <option value="">Sin version</option>
+          {versionId && !versions.some((version) => version.id === versionId) ? (
+            <option value={versionId} disabled>
+              Version actual no disponible
+            </option>
+          ) : null}
+          {versions.map((version) => (
+            <option key={version.id} value={version.id}>
+              {version.name}
             </option>
           ))}
         </select>
