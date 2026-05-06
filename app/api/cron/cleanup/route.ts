@@ -37,9 +37,18 @@ export async function GET(req: Request) {
     .lt("created_at", cutoff);
 
   if (feedbackError) {
-    console.error("Feedback cleanup error:", feedbackError);
-    return new Response("Feedback cleanup failed", { status: 500 });
-  }
+  console.error("Feedback cleanup error:", {
+    code: feedbackError.code,
+    message: feedbackError.message,
+    details: feedbackError.details,
+    hint: feedbackError.hint,
+  });
+
+  return new Response(
+    `Feedback cleanup failed: ${feedbackError.message}`,
+    { status: 500 },
+  );
+}
 
   const { error: announcementsError } = await supabase
     .from("announcements")
