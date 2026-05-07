@@ -10,13 +10,6 @@ export async function GET(req: Request) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-  console.log("Cleanup env check:", {
-    hasUrl: Boolean(supabaseUrl),
-    hasServiceRoleKey: Boolean(serviceRoleKey),
-    serviceRoleLength: serviceRoleKey?.length,
-    serviceRoleStart: serviceRoleKey?.slice(0, 24),
-  });
-
   if (!supabaseUrl || !serviceRoleKey) {
     return new Response("Missing environment variables", { status: 500 });
   }
