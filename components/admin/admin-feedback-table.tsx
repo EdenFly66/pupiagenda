@@ -1,11 +1,21 @@
 "use client";
 
-import { Inbox, LayoutDashboard, ListChecks, Map, Plus, ShieldCheck, Trash2, TriangleAlert } from "lucide-react";
-import type { DragEvent } from "react";
+import { Inbox, LayoutDashboard, ListChecks, Map, Plus, Search, ShieldCheck, Trash2, TriangleAlert } from "lucide-react";
+import type { DragEvent, ReactNode } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AdminFeedbackNotes } from "@/components/admin/admin-feedback-notes";
 import { AdminFeedbackStatusSelect } from "@/components/admin/admin-feedback-status-select";
 import { SectionCard } from "@/components/ui/section-card";
+import {
+  filterAdminFeedback,
+  groupFeedbackByStatus,
+  groupFeedbackByVersion,
+  sortFeedbackByPriority,
+  type AdminCategoryFilter,
+  type AdminFeedbackFilters,
+  type AdminPriorityFilter,
+  type AdminVersionFilter,
+} from "@/lib/admin-feedback-helpers";
 import {
   createProductVersion,
   deleteProductVersion,
@@ -30,12 +40,34 @@ import { cn } from "@/lib/utils";
 
 type AdminFeedbackView = "kanban" | "roadmap" | "manage";
 
+const adminCategoryFilters: AdminCategoryFilter[] = [
+  "all",
+  "idea",
+  "bug",
+  "improvement",
+  "other",
+];
+
+const categoryFilterLabels: Record<AdminCategoryFilter, string> = {
+  all: "Todas",
+  idea: "Idea",
+  bug: "Problema",
+  improvement: "Mejora",
+  other: "Otro",
+};
+
 export function AdminFeedbackTable() {
   const [items, setItems] = useState<AdminFeedbackItem[]>([]);
   const [versions, setVersions] = useState<ProductVersion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [view, setView] = useState<AdminFeedbackView>("kanban");
+  const [filters, setFilters] = useState<AdminFeedbackFilters>({
+    category: "all",
+    priority: "all",
+    search: "",
+    version: "all",
+  });
 
   useEffect(() => {
     let active = true;
@@ -103,27 +135,156 @@ export function AdminFeedbackTable() {
     return <AdminFeedbackEmpty />;
   }
 
+  const filteredItems = sortFeedbackByPriority(
+    filterAdminFeedback(items, filters),
+  );
+
   return (
     <div className="space-y-4">
-      <ViewSwitcher value={view} onChange={setView} />
+      <AdminFeedbackToolbar
+        filters={filters}
+        onFiltersChange={setFilters}
+        onViewChange={setView}
+        versions={versions}
+        view={view}
+      />
 
-      {view === "kanban" ? (
-        <AdminFeedbackKanban items={items} setItems={setItems} versions={versions} />
+      {filteredItems.length === 0 ? (
+        <AdminFilteredEmpty />
+      ) : view === "kanban" ? (
+        <AdminFeedbackKanban
+          allItems={items}
+          items={filteredItems}
+          setItems={setItems}
+          versions={versions}
+        />
       ) : view === "roadmap" ? (
         <AdminFeedbackRoadmap
-          items={items}
+          items={filteredItems}
+          allItems={items}
           setItems={setItems}
           versions={versions}
           onVersionsChanged={refreshVersions}
         />
       ) : (
         <AdminFeedbackManage
-          items={items}
+          items={filteredItems}
           refreshFeedback={refreshFeedback}
           versions={versions}
         />
       )}
     </div>
+  );
+}
+
+function AdminFeedbackToolbar({
+  filters,
+  onFiltersChange,
+  onViewChange,
+  versions,
+  view,
+}: {
+  filters: AdminFeedbackFilters;
+  onFiltersChange: (filters: AdminFeedbackFilters) => void;
+  onViewChange: (view: AdminFeedbackView) => void;
+  versions: ProductVersion[];
+  view: AdminFeedbackView;
+}) {
+  function updateFilters(patch: Partial<AdminFeedbackFilters>) {
+    onFiltersChange({ ...filters, ...patch });
+  }
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <ViewSwitcher value={view} onChange={onViewChange} />
+        <label className="relative block w-full lg:max-w-md">
+          <span className="sr-only">Buscar</span>
+          <Search
+            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted"
+            aria-hidden="true"
+          />
+          <input
+            value={filters.search}
+            onChange={(event) => updateFilters({ search: event.target.value })}
+            className="h-11 w-full rounded-2xl border border-rose-100 bg-white py-2 pl-10 pr-4 text-sm text-foreground shadow-sm outline-none transition placeholder:text-placeholder focus:border-brand focus:ring-4 focus:ring-rose-soft"
+            placeholder="Buscar sugerencias, usuarios o categorías..."
+          />
+        </label>
+      </div>
+
+      <div className="grid gap-3 md:grid-cols-3">
+        <AdminFilterSelect
+          label="Categoria"
+          value={filters.category}
+          onChange={(value) =>
+            updateFilters({ category: value as AdminCategoryFilter })
+          }
+        >
+          {adminCategoryFilters.map((category) => (
+            <option key={category} value={category}>
+              {categoryFilterLabels[category]}
+            </option>
+          ))}
+        </AdminFilterSelect>
+        <AdminFilterSelect
+          label="Prioridad"
+          value={filters.priority}
+          onChange={(value) =>
+            updateFilters({ priority: value as AdminPriorityFilter })
+          }
+        >
+          <option value="all">Todas</option>
+          {adminFeedbackPriorities.map((priority) => (
+            <option key={priority} value={priority}>
+              {adminFeedbackPriorityLabels[priority]}
+            </option>
+          ))}
+        </AdminFilterSelect>
+        <AdminFilterSelect
+          label="Version"
+          value={filters.version}
+          onChange={(value) =>
+            updateFilters({ version: value as AdminVersionFilter })
+          }
+        >
+          <option value="all">Todas</option>
+          <option value="unassigned">Sin version</option>
+          {versions.map((version) => (
+            <option key={version.id} value={version.id}>
+              {version.name}
+            </option>
+          ))}
+        </AdminFilterSelect>
+      </div>
+    </div>
+  );
+}
+
+function AdminFilterSelect({
+  children,
+  label,
+  onChange,
+  value,
+}: {
+  children: ReactNode;
+  label: string;
+  onChange: (value: string) => void;
+  value: string;
+}) {
+  return (
+    <label className="block">
+      <span className="text-xs font-semibold uppercase tracking-normal text-muted">
+        {label}
+      </span>
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="mt-2 h-10 w-full rounded-2xl border border-rose-100 bg-white px-3 text-sm font-medium text-foreground shadow-sm outline-none transition focus:border-brand focus:ring-4 focus:ring-rose-soft"
+      >
+        {children}
+      </select>
+    </label>
   );
 }
 
@@ -172,10 +333,12 @@ function ViewSwitcher({
 }
 
 function AdminFeedbackKanban({
+  allItems,
   items,
   setItems,
   versions,
 }: {
+  allItems: AdminFeedbackItem[];
   items: AdminFeedbackItem[];
   setItems: (items: AdminFeedbackItem[]) => void;
   versions: ProductVersion[];
@@ -184,7 +347,7 @@ function AdminFeedbackKanban({
   const [movingId, setMovingId] = useState<string | null>(null);
   const [prioritySavingId, setPrioritySavingId] = useState<string | null>(null);
   const [moveError, setMoveError] = useState<string | null>(null);
-  const groupedItems = useMemo(() => groupByStatus(items), [items]);
+  const groupedItems = useMemo(() => groupFeedbackByStatus(items), [items]);
 
   async function moveFeedback(feedbackId: string, nextStatus: AdminFeedbackStatus) {
     const currentItem = items.find((item) => item.id === feedbackId);
@@ -193,11 +356,11 @@ function AdminFeedbackKanban({
       return;
     }
 
-    const previousItems = items;
+    const previousItems = allItems;
     setMoveError(null);
     setMovingId(feedbackId);
     setItems(
-      items.map((item) =>
+      allItems.map((item) =>
         item.id === feedbackId ? { ...item, status: nextStatus } : item,
       ),
     );
@@ -229,11 +392,11 @@ function AdminFeedbackKanban({
       return;
     }
 
-    const previousItems = items;
+    const previousItems = allItems;
     setMoveError(null);
     setPrioritySavingId(feedbackId);
     setItems(
-      items.map((item) =>
+      allItems.map((item) =>
         item.id === feedbackId ? { ...item, priority: nextPriority } : item,
       ),
     );
@@ -282,17 +445,14 @@ function AdminFeedbackKanban({
           >
             <div className="mb-3 flex items-center justify-between gap-2">
               <h2 className="text-sm font-semibold text-foreground">
-                {adminFeedbackStatusLabels[status]}
+                {adminFeedbackStatusLabels[status]} ({groupedItems[status].length})
               </h2>
-              <span className="rounded-full bg-rose-soft px-2.5 py-1 text-xs font-semibold text-brand-active">
-                {groupedItems[status].length}
-              </span>
             </div>
 
             <div className="space-y-3">
               {groupedItems[status].length === 0 ? (
                 <div className="rounded-2xl border border-dashed border-rose-100 bg-background p-4 text-center text-xs leading-5 text-muted">
-                  Sin sugerencias
+                  Sin elementos en este estado.
                 </div>
               ) : (
                 groupedItems[status].map((item) => (
@@ -410,11 +570,13 @@ function KanbanPrioritySelect({
 }
 
 function AdminFeedbackRoadmap({
+  allItems,
   items,
   onVersionsChanged,
   setItems,
   versions,
 }: {
+  allItems: AdminFeedbackItem[];
   items: AdminFeedbackItem[];
   onVersionsChanged: () => Promise<void>;
   setItems: (items: AdminFeedbackItem[]) => void;
@@ -425,7 +587,7 @@ function AdminFeedbackRoadmap({
   const [versionSavingId, setVersionSavingId] = useState<string | null>(null);
   const [roadmapError, setRoadmapError] = useState<string | null>(null);
   const groupedItems = useMemo(
-    () => groupByVersionId(items, versions),
+    () => groupFeedbackByVersion(items, versions),
     [items, versions],
   );
   const backlogItems = useMemo(
@@ -451,13 +613,28 @@ function AdminFeedbackRoadmap({
   }
 
   async function handleDeleteVersion(versionId: string) {
+    const version = versions.find((currentVersion) => currentVersion.id === versionId);
+
+    if (version?.name.trim().toLowerCase() === "backlog") {
+      setRoadmapError("No se puede eliminar una version protegida.");
+      return;
+    }
+
+    const confirmed = window.confirm(
+      "Las features asignadas a esta versión pasarán a Sin versión.",
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
     setRoadmapError(null);
     setSavingVersion(true);
 
     try {
       await deleteProductVersion(versionId);
       setItems(
-        items.map((item) =>
+        allItems.map((item) =>
           item.versionId === versionId ? { ...item, versionId: null } : item,
         ),
       );
@@ -472,12 +649,12 @@ function AdminFeedbackRoadmap({
   }
 
   async function handleAssignVersion(feedbackId: string, versionId: string | null) {
-    const previousItems = items;
+    const previousItems = allItems;
 
     setRoadmapError(null);
     setVersionSavingId(feedbackId);
     setItems(
-      items.map((item) =>
+      allItems.map((item) =>
         item.id === feedbackId ? { ...item, versionId } : item,
       ),
     );
@@ -532,20 +709,17 @@ function AdminFeedbackRoadmap({
         <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="text-base font-semibold text-foreground">
-              Backlog
+              Backlog ({backlogItems.length})
             </h2>
             <p className="text-sm leading-6 text-muted">
               Todo lo pendiente: features que aun no estan completadas ni rechazadas.
             </p>
           </div>
-          <span className="w-fit rounded-full bg-rose-soft px-2.5 py-1 text-xs font-semibold text-brand-active">
-            {backlogItems.length}
-          </span>
         </div>
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           {backlogItems.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-rose-100 bg-background p-5 text-center text-sm leading-6 text-muted">
-              No hay features pendientes
+              No hay sugerencias que coincidan con los filtros actuales.
             </div>
           ) : (
             backlogItems.map((item) => (
@@ -621,7 +795,7 @@ function RoadmapColumn({
       <div className="mb-4 flex items-center justify-between gap-3">
         <div className="min-w-0">
           <h2 className="truncate text-base font-semibold text-foreground">
-            {title}
+            {title} ({items.length})
           </h2>
           {description || version?.description ? (
             <p className="mt-1 line-clamp-2 text-xs leading-5 text-muted">
@@ -630,9 +804,6 @@ function RoadmapColumn({
           ) : null}
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <span className="rounded-full bg-rose-soft px-2.5 py-1 text-xs font-semibold text-brand-active">
-            {items.length}
-          </span>
           {version && onDeleteVersion ? (
             <button
               type="button"
@@ -649,7 +820,7 @@ function RoadmapColumn({
       <div className="space-y-3">
         {items.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-rose-100 bg-background p-5 text-center text-sm leading-6 text-muted">
-            Sin items planificados
+            Sin elementos en este estado.
           </div>
         ) : (
           items.map((item) => (
@@ -830,36 +1001,9 @@ function formatPriority(value: string) {
   return adminFeedbackPriorityLabels[value as AdminFeedbackPriority] ?? value;
 }
 
-function groupByStatus(items: AdminFeedbackItem[]) {
-  return adminFeedbackStatuses.reduce(
-    (groups, status) => {
-      groups[status] = items.filter((item) => item.status === status);
-      return groups;
-    },
-    {} as Record<AdminFeedbackStatus, AdminFeedbackItem[]>,
-  );
-}
-
 function getVersionLabel(versionId: string | null, versions: ProductVersion[]) {
   if (!versionId) return "Sin version";
   return versions.find((version) => version.id === versionId)?.name ?? "Sin version";
-}
-
-function groupByVersionId(items: AdminFeedbackItem[], versions: ProductVersion[]) {
-  const versionIds = new Set(versions.map((version) => version.id));
-
-  return {
-    unassigned: items.filter(
-      (item) => !item.versionId || !versionIds.has(item.versionId),
-    ),
-    byVersion: versions.reduce(
-      (groups, version) => {
-        groups[version.id] = items.filter((item) => item.versionId === version.id);
-        return groups;
-      },
-      {} as Record<string, AdminFeedbackItem[]>,
-    ),
-  };
 }
 
 function AdminFeedbackLoading() {
@@ -872,6 +1016,19 @@ function AdminFeedbackLoading() {
         />
       ))}
     </div>
+  );
+}
+
+function AdminFilteredEmpty() {
+  return (
+    <SectionCard className="rounded-3xl border-dashed border-rose-200 bg-white/80">
+      <div className="py-6 text-center">
+        <Inbox className="mx-auto size-9 text-brand-active" aria-hidden="true" />
+        <h2 className="mt-3 text-base font-semibold text-foreground">
+          No hay sugerencias que coincidan con los filtros actuales.
+        </h2>
+      </div>
+    </SectionCard>
   );
 }
 
